@@ -1,5 +1,20 @@
 # AI Stack Map — Testing Backlog
 
+## v1.16.0 — Suggest-an-edit hardening (Turnstile + durable rate limit)
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-ts1 | Turnstile | With `VITE_TURNSTILE_SITE_KEY` set, the box shows a Turnstile widget; submit is blocked until it's solved | |
+| T-ts2 | Turnstile | With `TURNSTILE_SECRET_KEY` set, a request with a missing/invalid token is rejected (`captcha_failed`, 403) and the widget resets | |
+| T-ts3 | Turnstile | With neither key set, the box behaves exactly as v1.15 (no widget, submits normally) | |
+| T-rl1 | Rate limit | With Upstash env vars set, the 6th submission inside the window returns `rate_limited` (429) — and the cap holds across function instances | |
+| T-rl2 | Rate limit | With no Upstash env, the in-memory fallback still caps within a warm instance | |
+| T-dep1 | Deploy | `npm install` pulls `@upstash/ratelimit` + `@upstash/redis`; Vercel function build is clean (no `process`/type errors) | |
+
+**Note:** the captcha widget can only be fully exercised on a real (preview) deploy with valid keys, not locally.
+
+---
+
 ## v1.15.0 — In-app "Suggest an edit" → GitHub issue
 
 | # | Area | What to check | Notes |

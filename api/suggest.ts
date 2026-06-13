@@ -6,9 +6,16 @@
  *   GITHUB_TOKEN  — fine-grained PAT (or GitHub App token) with Issues: write on the repo
  *   GITHUB_REPO   — "owner/repo" (optional; defaults below)
  *   SUGGEST_LABEL — issue label (optional; defaults to "content")
+ *   TURNSTILE_SECRET_KEY     — Cloudflare Turnstile secret (optional; enables captcha)
+ *   UPSTASH_REDIS_REST_URL   — Upstash Redis REST URL (optional; enables durable rate limit)
+ *   UPSTASH_REDIS_REST_TOKEN — Upstash Redis REST token (optional)
  *
- * Spam control: honeypot field + length caps + a best-effort per-IP throttle.
+ * Spam control: honeypot + length caps + Cloudflare Turnstile (when configured)
+ * + a per-IP rate limit (durable via Upstash when configured, else in-memory).
  */
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
 export const config = { runtime: 'edge' }
 
 // Vercel injects env vars on `process.env` at runtime. Declare it for the
@@ -33,6 +40,34 @@ function tooMany(ip: string): boolean {
   recent.push(now)
   hits.set(ip, recent)
   return recent.length > MAX_PER_WINDOW
+}
+
+// Durable per-IP rate limit via Upstash Redis when configured (else in-memory).
+const redisUrl = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL
+const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN
+const ratelimit =
+  redisUrl && redisToken
+    ? new Ratelimit({
+        redis: new Redis({ url: redisUrl, token: redisToken }),
+        limiter: Ratelimit.slidingWindow(MAX_PER_WINDOW, '10 m'),
+        prefix: 'suggest',
+      })
+    : null
+
+const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET_KEY
+
+async function passesTurnstile(token: string, ip: string): Promise<boolean> {
+  if (!TURNSTILE_SECRET) return true // captcha not configured → skip
+  const form = new URLSearchParams()
+  form.set('secret', TURNSTILE_SECRET)
+  form.set('response', token)
+  if (ip !== 'unknown') form.set('remoteip', ip)
+  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    body: form,
+  })
+  const result = (await res.json().catch(() => ({}))) as { success?: boolean }
+  return result.success === true
 }
 
 function json(data: unknown, status = 200): Response {
@@ -67,7 +102,19 @@ export default async function handler(req: Request): Promise<Response> {
   if (suggestion.length > MAX_LEN) return json({ error: 'too_long' }, 400)
 
   const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0]?.trim() || 'unknown'
-  if (tooMany(ip)) return json({ error: 'rate_limited' }, 429)
+
+  // Captcha (Cloudflare Turnstile) when configured
+  if (!(await passesTurnstile(str(payload.turnstileToken, 2048), ip))) {
+    return json({ error: 'captcha_failed' }, 403)
+  }
+
+  // Rate limit: durable (Upstash) when configured, else best-effort in-memory
+  if (ratelimit) {
+    const { success } = await ratelimit.limit(ip)
+    if (!success) return json({ error: 'rate_limited' }, 429)
+  } else if (tooMany(ip)) {
+    return json({ error: 'rate_limited' }, 429)
+  }
 
   const section = str(payload.section, 80) || 'General'
   const topicName = str(payload.topicName, 80)

@@ -6,8 +6,9 @@ Living plan for content and product work. Map version in the app footer (`src/da
 
 ---
 
-## Shipped (v1.5 – v1.15)
+## Shipped (v1.5 – v1.16)
 
+- [x] **Suggest-an-edit hardening** (v1.16) — optional Cloudflare Turnstile captcha + durable per-IP rate limit via Upstash; both degrade gracefully
 - [x] **In-app "Suggest an edit"** (v1.15) — type a suggestion → auto-files a GitHub issue via a Vercel function (`api/suggest.ts`); honeypot + limits, prefilled-link fallback
 - [x] **Build vs buy view** (v1.14) — relative effort/time/control/risk on Overview
 - [x] **Governance & compliance lens** (v1.14) — per-layer checklist + risk tiers on the sketch
@@ -102,7 +103,7 @@ _All clear — the `content` GitHub label exists, so suggest-edit issues and the
 | Offline PWA | ✅ shipped (v1.14) — manifest + service worker cache the shell |
 | Community edits | ✅ shipped (v1.11) — PR + issue templates, CI (validate + build), and the `content` label for auto-tagging |
 | Analytics-free usage | Optional Plausible / none — stay privacy-friendly |
-| Suggest-an-edit hardening | Optional follow-ups to the v1.15 box: add a captcha (Cloudflare Turnstile / hCaptcha), and a **durable** per-IP rate limit via Vercel KV / Edge Config — the current `api/suggest.ts` limiter is best-effort in-memory (per warm isolate only). Honeypot + length limits are in place today. |
+| Suggest-an-edit hardening | ✅ shipped (v1.16) — optional Cloudflare Turnstile captcha + durable per-IP rate limit via Upstash, both degrading gracefully. Set the keys (`VITE_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY`, `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`) to enable. |
 
 ---
 

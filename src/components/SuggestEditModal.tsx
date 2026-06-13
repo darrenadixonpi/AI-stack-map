@@ -1,5 +1,44 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { suggestEditUrl, type FeedbackContext } from '../utils/feedback'
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
+
+interface TurnstileApi {
+  render: (
+    el: HTMLElement,
+    opts: {
+      sitekey: string
+      callback: (token: string) => void
+      'error-callback'?: () => void
+      'expired-callback'?: () => void
+      theme?: 'auto' | 'light' | 'dark'
+    },
+  ) => string
+  reset: (id?: string) => void
+  remove: (id?: string) => void
+}
+
+declare global {
+  interface Window {
+    turnstile?: TurnstileApi
+  }
+}
+
+let turnstilePromise: Promise<void> | null = null
+function loadTurnstile(): Promise<void> {
+  if (typeof window !== 'undefined' && window.turnstile) return Promise.resolve()
+  if (turnstilePromise) return turnstilePromise
+  turnstilePromise = new Promise((resolve, reject) => {
+    const s = document.createElement('script')
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+    s.async = true
+    s.defer = true
+    s.onload = () => resolve()
+    s.onerror = () => reject(new Error('turnstile failed to load'))
+    document.head.appendChild(s)
+  })
+  return turnstilePromise
+}
 
 type Props = FeedbackContext & {
   onClose: () => void
@@ -16,6 +55,7 @@ const ERRORS: Record<string, string> = {
   too_long: 'That’s a bit long — please trim it.',
   rate_limited: 'A few too many suggestions just now — try again in a few minutes.',
   github_error: 'GitHub rejected the request.',
+  captcha_failed: 'Verification failed — please complete the checkbox again.',
 }
 
 export function SuggestEditModal({ onClose, ...ctx }: Props) {
@@ -25,12 +65,50 @@ export function SuggestEditModal({ onClose, ...ctx }: Props) {
   const [status, setStatus] = useState<Status>('idle')
   const [resultUrl, setResultUrl] = useState<string | null>(null)
   const [message, setMessage] = useState('')
+  const [captchaToken, setCaptchaToken] = useState('')
+  const widgetRef = useRef<HTMLDivElement>(null)
+  const widgetIdRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    const siteKey = TURNSTILE_SITE_KEY
+    if (!siteKey) return
+    let cancelled = false
+    loadTurnstile()
+      .then(() => {
+        if (cancelled || !widgetRef.current || !window.turnstile || widgetIdRef.current) return
+        widgetIdRef.current = window.turnstile.render(widgetRef.current, {
+          sitekey: siteKey,
+          callback: (token) => setCaptchaToken(token),
+          'error-callback': () => setCaptchaToken(''),
+          'expired-callback': () => setCaptchaToken(''),
+        })
+      })
+      .catch(() => {
+        /* script blocked/offline — token stays empty; the server still gates if it requires one */
+      })
+    return () => {
+      cancelled = true
+      if (widgetIdRef.current && window.turnstile) {
+        try {
+          window.turnstile.remove(widgetIdRef.current)
+        } catch {
+          /* ignore */
+        }
+        widgetIdRef.current = null
+      }
+    }
+  }, [])
 
   const pageUrl =
     typeof window !== 'undefined'
       ? `${window.location.origin}${window.location.pathname}${window.location.hash}`
       : ''
   const fallbackUrl = suggestEditUrl(ctx)
+
+  const resetCaptcha = () => {
+    if (widgetIdRef.current && window.turnstile) window.turnstile.reset(widgetIdRef.current)
+    setCaptchaToken('')
+  }
 
   const submit = async () => {
     const trimmed = text.trim()
@@ -39,13 +117,26 @@ export function SuggestEditModal({ onClose, ...ctx }: Props) {
       setMessage(ERRORS.too_short)
       return
     }
+    if (TURNSTILE_SITE_KEY && !captchaToken) {
+      setStatus('error')
+      setMessage('Please complete the verification below.')
+      return
+    }
     setStatus('submitting')
     setMessage('')
     try {
       const res = await fetch('/api/suggest', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ suggestion: trimmed, section, topicName, topicId: ctx.topicId, pageUrl, website }),
+        body: JSON.stringify({
+          suggestion: trimmed,
+          section,
+          topicName,
+          topicId: ctx.topicId,
+          pageUrl,
+          website,
+          turnstileToken: captchaToken,
+        }),
       })
       const data: { ok?: boolean; url?: string; error?: string } = await res.json().catch(() => ({}))
       if (res.ok && data.ok) {
@@ -54,10 +145,12 @@ export function SuggestEditModal({ onClose, ...ctx }: Props) {
       } else {
         setStatus('error')
         setMessage(ERRORS[data.error ?? ''] ?? 'Could not submit automatically.')
+        resetCaptcha()
       }
     } catch {
       setStatus('error')
       setMessage('Could not reach the server.')
+      resetCaptcha()
     }
   }
 
@@ -117,6 +210,7 @@ export function SuggestEditModal({ onClose, ...ctx }: Props) {
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
             />
+            {TURNSTILE_SITE_KEY && <div ref={widgetRef} className="suggest-turnstile" />}
             {status === 'error' && (
               <p className="suggest-error">
                 {message}{' '}

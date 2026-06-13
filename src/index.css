@@ -1814,6 +1814,10 @@ table.compare-table th {
   color: var(--danger, #dc2626);
   font-size: 0.85rem;
 }
+.suggest-turnstile {
+  margin: 0.5rem 0;
+  min-height: 65px;
+}
 
 .sketch-layout {
   display: grid;

@@ -10,6 +10,15 @@ export interface ChangelogEntry {
  */
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.16.0',
+    date: '2026-06-13',
+    changes: [
+      'Suggest-an-edit hardening: optional Cloudflare Turnstile captcha on the box, verified server-side before filing',
+      'Suggest-an-edit hardening: optional durable per-IP rate limit via Upstash (falls back to the in-memory limiter)',
+      'Both degrade gracefully when their keys / backend are not configured',
+    ],
+  },
+  {
     version: '1.15.0',
     date: '2026-06-13',
     changes: [
