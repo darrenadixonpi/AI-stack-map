@@ -10,6 +10,16 @@ export interface ChangelogEntry {
  */
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.7.0',
+    date: '2026-06-12',
+    changes: [
+      'Stack sketch: "Fork & compare" opens side-by-side diff of two sketches',
+      'Compare mode highlights layers that differ in pick or phase',
+      'Compare URLs encode both sketches in the hash — fully shareable',
+      'OG image (public/og-image.png) wired to meta tags for link previews',
+    ],
+  },
+  {
     version: '1.6.0',
     date: '2026-06-12',
     changes: [

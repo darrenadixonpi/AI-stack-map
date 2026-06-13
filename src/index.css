@@ -1593,3 +1593,136 @@ table.compare-table th {
   .app-main { padding: 1rem; }
   .agent-actions { flex-direction: column; }
 }
+
+/* ── Sketch compare ────────────────────────────────────────────────────────── */
+
+/* Two-column editor layout in compare mode */
+.sketch-compare-editors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.sketch-compare-editor-col {
+  /* card handles border/bg; ensure heading doesn't double-space */
+}
+
+.sketch-compare-editor-col h3 {
+  margin-top: 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* Inner editor cards in compare mode get tighter padding */
+.sketch-compare-editor-col .card {
+  padding: 0.85rem 1rem;
+}
+
+/* Diff table */
+.sketch-compare-wrap {
+  margin-top: 0.5rem;
+}
+
+.sketch-compare-summary {
+  margin: 0 0 1rem;
+}
+
+.sketch-compare-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.sketch-compare-header {
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-raised, var(--surface));
+  border-bottom: 2px solid var(--border);
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sketch-compare-row {
+  display: contents;
+}
+
+.sketch-compare-row > div {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+.sketch-compare-row:last-child > div {
+  border-bottom: none;
+}
+
+/* Diff highlight — layers that differ */
+.sketch-compare-row-diff > div {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.sketch-compare-row-diff .sketch-compare-a-col,
+.sketch-compare-row-diff .sketch-compare-b-col {
+  border-left: 3px solid var(--accent);
+}
+
+/* Only in one sketch */
+.sketch-compare-row-only-a .sketch-compare-b-col,
+.sketch-compare-row-only-b .sketch-compare-a-col {
+  background: color-mix(in srgb, #94a3b8 10%, transparent);
+}
+
+.sketch-compare-row-only-a .sketch-compare-a-col,
+.sketch-compare-row-only-b .sketch-compare-b-col {
+  background: color-mix(in srgb, #22c55e 8%, transparent);
+  border-left: 3px solid #22c55e;
+}
+
+.sketch-compare-absent {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+.sketch-compare-layer-name {
+  font-weight: 600;
+}
+
+.sketch-compare-diff-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-left: 0.2rem;
+}
+
+.sketch-compare-pick {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Dark-mode adjustments */
+[data-theme="dark"] .sketch-compare-row-only-a .sketch-compare-a-col,
+[data-theme="dark"] .sketch-compare-row-only-b .sketch-compare-b-col {
+  border-color: #4ade80;
+  background: color-mix(in srgb, #4ade80 10%, transparent);
+}
+
+@media (max-width: 760px) {
+  .sketch-compare-editors {
+    grid-template-columns: 1fr;
+  }
+
+  .sketch-compare-grid {
+    grid-template-columns: 80px 1fr 1fr;
+    font-size: 0.8rem;
+  }
+}

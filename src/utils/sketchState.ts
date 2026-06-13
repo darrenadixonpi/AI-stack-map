@@ -46,6 +46,23 @@ export function encodeSketchState(state: StackSketchState): string {
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
 }
 
+export function encodeCompareAnchor(a: StackSketchState, b: StackSketchState): string {
+  return `compare/${encodeSketchState(a)}/${encodeSketchState(b)}`
+}
+
+export function parseCompareAnchor(
+  anchor: string | undefined,
+): [StackSketchState, StackSketchState] | null {
+  if (!anchor?.startsWith('compare/')) return null
+  const rest = anchor.slice('compare/'.length)
+  const slash = rest.indexOf('/')
+  if (slash === -1) return null
+  const a = decodeSketchState(rest.slice(0, slash))
+  const b = decodeSketchState(rest.slice(slash + 1))
+  if (!a || !b) return null
+  return [a, b]
+}
+
 export function decodeSketchState(anchor: string | undefined): StackSketchState | null {
   if (!anchor || anchor.length < 8) return null
   try {
