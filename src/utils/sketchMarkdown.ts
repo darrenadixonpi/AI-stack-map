@@ -16,9 +16,12 @@ export function sketchToMarkdown(state: StackSketchState): string {
     if (!state.layers.includes(layerId)) continue
     const layer = layers.find((l) => l.id === layerId)
     const phase = state.phases[layerId] ?? 'mvp'
+    const mode = state.modes?.[layerId]
     const pickLabel = labelForPickId(state.picks[layerId])
-    lines.push(`### ${layer?.name ?? layerId} (${phase.toUpperCase()})`)
+    const modeLabel = mode ? ` · ${mode.charAt(0).toUpperCase() + mode.slice(1)}` : ''
+    lines.push(`### ${layer?.name ?? layerId} (${phase.toUpperCase()}${modeLabel})`)
     lines.push(`- **Choice:** ${pickLabel}`)
+    if (mode) lines.push(`- **Approach:** ${mode === 'build' ? 'Build in-house' : mode === 'buy' ? 'Buy / use managed service' : 'Hybrid (part build, part buy)'}`)
     if (layer) lines.push(`- **Skip if:** ${layer.skipIf}`)
     lines.push('')
   }

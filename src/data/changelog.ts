@@ -10,6 +10,17 @@ export interface ChangelogEntry {
  */
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.9.0',
+    date: '2026-06-13',
+    changes: [
+      'Sketch: "Refine in builder →" button sends current sketch to the Stack builder',
+      'Builder: "Update sketch ↩" merges builder recommendations back, preserving existing picks and phases',
+      'Sketch: Build / Buy / Hybrid approach toggle on every active layer',
+      'Approach annotation appears as a colour-coded badge in the sketch diagram and in markdown export',
+      'Compare table rebuilt as a semantic <table> for full screen reader support (ARIA fix)',
+    ],
+  },
+  {
     version: '1.8.0',
     date: '2026-06-13',
     changes: [

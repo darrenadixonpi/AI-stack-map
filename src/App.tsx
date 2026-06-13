@@ -118,7 +118,13 @@ function App() {
       case 'patterns':
         return <UseCasesPage onNavigate={navigate} scrollTo={anchor} />
       case 'builder':
-        return <StackBuilderPage onNavigate={navigate} scrollTo={anchor} />
+        return (
+          <StackBuilderPage
+            onNavigate={navigate}
+            anchor={anchor}
+            scrollTo={anchor?.startsWith('from-sketch/') ? undefined : anchor}
+          />
+        )
       case 'sketch':
         return (
           <StackSketchPage

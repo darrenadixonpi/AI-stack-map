@@ -1,6 +1,6 @@
 import { labelForPickId } from '../data/sketchPicks'
 import { layers, layerOrder } from '../data/layers'
-import type { SketchPhase, StackSketchState } from '../types'
+import type { SketchLayerMode, SketchPhase, StackSketchState } from '../types'
 
 interface Props {
   state: StackSketchState
@@ -22,6 +22,7 @@ export function StackSketchDiagram({ state }: Props) {
       {enabled.map((layerId, index) => {
         const layer = layers.find((l) => l.id === layerId)!
         const phase: SketchPhase = state.phases[layerId] ?? 'mvp'
+        const mode: SketchLayerMode | undefined = state.modes?.[layerId]
         const pickLabel = labelForPickId(state.picks[layerId])
         return (
           <div key={layerId} className="sketch-stack-row">
@@ -40,6 +41,11 @@ export function StackSketchDiagram({ state }: Props) {
                 <span className={`sketch-phase-badge sketch-phase-${phase}`}>
                   {phase === 'mvp' ? 'MVP' : 'Growth'}
                 </span>
+                {mode && (
+                  <span className={`sketch-mode-badge sketch-mode-badge-${mode}`} aria-label={`Approach: ${mode}`}>
+                    {mode === 'build' ? '🔨 Build' : mode === 'buy' ? '🛒 Buy' : '⚗️ Hybrid'}
+                  </span>
+                )}
               </div>
               <span className="flow-label sketch-pick-label">{pickLabel}</span>
             </div>

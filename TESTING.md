@@ -1,5 +1,30 @@
 # AI Stack Map — Testing Backlog
 
+## v1.9.0 — ARIA fix, builder↔sketch sync, buy+build annotation
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-a1 | ARIA compare | Open compare table with a screen reader (or axe DevTools) — rows and columns announce correctly | |
+| T-a2 | ARIA compare | Table has `aria-label="Layer-by-layer stack comparison"` | |
+| T-a3 | ARIA compare | Diff cells that differ have `aria-label="differs"` badge | |
+| T-s1 | Builder→sketch | Build a sketch → click "Refine in builder →" → lands on Builder tab | |
+| T-s2 | Builder→sketch | Builder URL contains `from-sketch/{encoded}` in the hash anchor | |
+| T-s3 | Builder→sketch | "Update sketch ↩" button is visible (in addition to "New sketch →") | |
+| T-s4 | Builder→sketch | Clicking "Update sketch ↩" returns to Sketch with builder-recommended layers applied | |
+| T-s5 | Builder→sketch | Layers that were in the original sketch keep their pick/phase if still recommended by builder | |
+| T-s6 | Builder→sketch | "New sketch →" creates a fresh sketch (no previous picks carried over) | |
+| T-s7 | Builder→sketch | Arriving at builder without `from-sketch/` anchor shows only "Compose stack sketch →" | |
+| T-m1 | Mode toggle | Each active layer in Sketch editor shows Build / Buy / Hybrid buttons | |
+| T-m2 | Mode toggle | Clicking a mode button highlights it; clicking again deselects | |
+| T-m3 | Mode toggle | Mode badge (🔨/🛒/⚗️) appears in the sketch diagram for layers with a mode set | |
+| T-m4 | Mode toggle | Mode is encoded in the share URL and survives page reload | |
+| T-m5 | Mode toggle | "Copy markdown plan" output includes "Approach: Build / Buy / Hybrid" under applicable layers | |
+| T-m6 | Mode toggle | Layers with no mode set have no badge and no approach line in markdown | |
+
+---
+
+
+
 Manual QA items to verify on the live Vercel deployment. Add new items as features ship; tick them off after a real browser check.
 
 Legend: `[ ]` untested · `[~]` partial / uncertain · `[x]` confirmed good · `[!]` broken
@@ -135,4 +160,3 @@ These should pass on every deploy regardless of what shipped.
 - PWA / offline caching (not implemented)
 - i18n (not implemented)
 - Community PR CI validation (not implemented)
-- Sketch compare focus order / ARIA row semantics (noted in ROADMAP P0)

@@ -1,5 +1,5 @@
 import { layerOrder } from '../data/layers'
-import type { BuilderResult, LayerId, StackPattern, StackSketchState } from '../types'
+import type { BuilderResult, LayerId, SketchLayerMode, StackPattern, StackSketchState } from '../types'
 
 export function emptySketchState(): StackSketchState {
   return {
@@ -27,6 +27,30 @@ export function sketchFromPattern(pattern: StackPattern): StackSketchState {
     picks: {},
     phases,
     ignore: [...pattern.usuallySkip],
+  }
+}
+
+/**
+ * Merge a builder result back into an existing sketch.
+ * Layers the builder recommends are added (preserving existing picks/phases).
+ * Layers the builder omits are removed, but their picks/phases stay in case the
+ * user re-adds them later — only `layers[]` shrinks.
+ */
+export function mergeSketchWithBuilder(
+  existing: StackSketchState,
+  result: BuilderResult,
+): StackSketchState {
+  const newLayers = layerOrder.filter((id) => result.layers.includes(id))
+  const phases: StackSketchState['phases'] = {}
+  for (const id of newLayers) {
+    phases[id] = existing.phases[id] ?? 'mvp'
+  }
+  return {
+    title: existing.title,
+    layers: newLayers.length > 0 ? newLayers : ['model-access', 'build-ship'],
+    picks: { ...existing.picks }, // keep all picks; UI filters by active layers
+    phases,
+    ignore: [...result.ignoreForNow],
   }
 }
 
@@ -87,12 +111,21 @@ export function decodeSketchState(anchor: string | undefined): StackSketchState 
     const json = new TextDecoder().decode(bytes)
     const parsed = JSON.parse(json) as StackSketchState
     if (!Array.isArray(parsed.layers)) return null
+    const VALID_MODES: SketchLayerMode[] = ['build', 'buy', 'hybrid']
+    const rawModes = parsed.modes ?? {}
+    const modes: StackSketchState['modes'] = {}
+    for (const [k, v] of Object.entries(rawModes)) {
+      if (layerOrder.includes(k as LayerId) && VALID_MODES.includes(v as SketchLayerMode)) {
+        modes[k as LayerId] = v as SketchLayerMode
+      }
+    }
     return {
       title: parsed.title ?? 'My AI stack sketch',
       layers: parsed.layers.filter((l): l is LayerId => layerOrder.includes(l as LayerId)),
       picks: parsed.picks ?? {},
       phases: parsed.phases ?? {},
       ignore: Array.isArray(parsed.ignore) ? parsed.ignore : [],
+      modes: Object.keys(modes).length > 0 ? modes : undefined,
     }
   } catch {
     return null

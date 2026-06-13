@@ -18,15 +18,25 @@ import type {
   BuilderRole,
   BuilderTeam,
 } from '../types'
-import { encodeSketchState, defaultSketchFromBuilder } from '../utils/sketchState'
+import {
+  decodeSketchState,
+  encodeSketchState,
+  defaultSketchFromBuilder,
+  mergeSketchWithBuilder,
+} from '../utils/sketchState'
 import type { NavigationTarget } from '../navigation'
 
 interface Props {
   onNavigate: (t: NavigationTarget) => void
+  anchor?: string
   scrollTo?: string
 }
 
-export function StackBuilderPage({ onNavigate, scrollTo }: Props) {
+export function StackBuilderPage({ onNavigate, anchor, scrollTo }: Props) {
+  // Detect if we arrived here from a sketch via "Refine in builder →"
+  const fromSketch = anchor?.startsWith('from-sketch/')
+    ? decodeSketchState(anchor.slice('from-sketch/'.length))
+    : null
   const [goal, setGoal] = useState<BuilderGoal>('chat-docs')
   const [team, setTeam] = useState<BuilderTeam>('small')
   const [role, setRole] = useState<BuilderRole>('app-dev')
@@ -165,18 +175,34 @@ export function StackBuilderPage({ onNavigate, scrollTo }: Props) {
       <div className="card builder-output">
         <div className="builder-output-header">
           <h3>Recommended layers</h3>
-          <button
-            type="button"
-            className="segment-btn"
-            onClick={() =>
-              onNavigate({
-                tab: 'sketch',
-                anchor: encodeSketchState(defaultSketchFromBuilder(result)),
-              })
-            }
-          >
-            Compose stack sketch →
-          </button>
+          <div className="builder-output-actions">
+            {fromSketch && (
+              <button
+                type="button"
+                className="segment-btn segment-btn-primary"
+                onClick={() =>
+                  onNavigate({
+                    tab: 'sketch',
+                    anchor: encodeSketchState(mergeSketchWithBuilder(fromSketch, result)),
+                  })
+                }
+              >
+                Update sketch ↩
+              </button>
+            )}
+            <button
+              type="button"
+              className="segment-btn"
+              onClick={() =>
+                onNavigate({
+                  tab: 'sketch',
+                  anchor: encodeSketchState(defaultSketchFromBuilder(result)),
+                })
+              }
+            >
+              {fromSketch ? 'New sketch →' : 'Compose stack sketch →'}
+            </button>
+          </div>
         </div>
         <p>
           {result.layers

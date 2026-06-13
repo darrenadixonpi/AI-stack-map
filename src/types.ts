@@ -71,6 +71,7 @@ export interface Tool {
 }
 
 export type SketchPhase = 'mvp' | 'growth'
+export type SketchLayerMode = 'build' | 'buy' | 'hybrid'
 
 export interface StackSketchState {
   title: string
@@ -78,6 +79,7 @@ export interface StackSketchState {
   picks: Partial<Record<LayerId, string>>
   phases: Partial<Record<LayerId, SketchPhase>>
   ignore: string[]
+  modes?: Partial<Record<LayerId, SketchLayerMode>>
 }
 
 export interface PatternDiagramStep {

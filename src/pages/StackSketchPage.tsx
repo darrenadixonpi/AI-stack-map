@@ -14,7 +14,7 @@ import { sketchToMarkdown } from '../utils/sketchMarkdown'
 import { getSketchHints } from '../utils/sketchHints'
 import { getRelevantComparisons } from '../utils/sketchCompares'
 import { comparisons } from '../data/comparisons'
-import type { LayerId, SketchPhase, StackSketchState } from '../types'
+import type { LayerId, SketchLayerMode, SketchPhase, StackSketchState } from '../types'
 import type { NavigationTarget } from '../navigation'
 
 interface Props {
@@ -63,6 +63,18 @@ function SketchEditor({ state, setState, onNavigate }: EditorProps) {
       ...prev,
       phases: { ...prev.phases, [layerId]: phase },
     }))
+  }
+
+  const setMode = (layerId: LayerId, mode: SketchLayerMode | undefined) => {
+    setState((prev) => {
+      const modes = { ...(prev.modes ?? {}) }
+      if (mode === undefined) {
+        delete modes[layerId]
+      } else {
+        modes[layerId] = mode
+      }
+      return { ...prev, modes: Object.keys(modes).length > 0 ? modes : undefined }
+    })
   }
 
   const addIgnore = (text: string) => {
@@ -175,6 +187,26 @@ function SketchEditor({ state, setState, onNavigate }: EditorProps) {
                         {p === 'mvp' ? 'MVP' : 'Growth'}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                <div className="segment-group">
+                  <div className="segment-label">Approach</div>
+                  <div className="segment-row">
+                    {(['build', 'buy', 'hybrid'] as const).map((m) => {
+                      const currentMode = state.modes?.[layerId]
+                      return (
+                        <button
+                          key={m}
+                          type="button"
+                          className={`segment-btn sketch-mode-btn sketch-mode-${m}${currentMode === m ? ' active' : ''}`}
+                          onClick={() => setMode(layerId, currentMode === m ? undefined : m)}
+                          aria-pressed={currentMode === m}
+                        >
+                          {m.charAt(0).toUpperCase() + m.slice(1)}
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -292,6 +324,10 @@ interface CompareViewProps {
 function SketchCompareView({ a, b, onEditA, onEditB }: CompareViewProps) {
   const diffCount = layerOrder.filter((id) => layerDiffStatus(id, a, b) !== 'same').length
 
+  const visibleRows = layerOrder
+    .map((layerId) => ({ layerId, status: layerDiffStatus(layerId, a, b) }))
+    .filter(({ status, layerId }) => !(status === 'same' && !a.layers.includes(layerId)))
+
   return (
     <div className="sketch-compare-wrap">
       <p className="sketch-compare-summary" style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
@@ -300,78 +336,61 @@ function SketchCompareView({ a, b, onEditA, onEditB }: CompareViewProps) {
           : `${diffCount} layer${diffCount !== 1 ? 's' : ''} differ between the two sketches.`}
       </p>
 
-      <div className="sketch-compare-grid">
-        {/* Column headers */}
-        <div className="sketch-compare-header sketch-compare-label-col" />
-        <div className="sketch-compare-header sketch-compare-a-col">
-          <strong>{a.title}</strong>
-          <button type="button" className="nav-chip nav-chip-inline" onClick={onEditA}>
-            Edit A →
-          </button>
-        </div>
-        <div className="sketch-compare-header sketch-compare-b-col">
-          <strong>{b.title}</strong>
-          <button type="button" className="nav-chip nav-chip-inline" onClick={onEditB}>
-            Edit B →
-          </button>
-        </div>
+      <table className="sketch-compare-table" aria-label="Layer-by-layer stack comparison">
+        <thead>
+          <tr>
+            <th scope="col" className="sketch-compare-label-col">Layer</th>
+            <th scope="col" className="sketch-compare-a-col">
+              <span>{a.title}</span>
+              <button type="button" className="nav-chip nav-chip-inline" onClick={onEditA}>
+                Edit A →
+              </button>
+            </th>
+            <th scope="col" className="sketch-compare-b-col">
+              <span>{b.title}</span>
+              <button type="button" className="nav-chip nav-chip-inline" onClick={onEditB}>
+                Edit B →
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {visibleRows.map(({ layerId, status }) => {
+            const layer = layers.find((l) => l.id === layerId)!
 
-        {/* Layer rows */}
-        {layerOrder.map((layerId) => {
-          const layer = layers.find((l) => l.id === layerId)!
-          const status = layerDiffStatus(layerId, a, b)
-          if (status === 'same' && !a.layers.includes(layerId)) return null // absent in both — skip
+            const cellA = !a.layers.includes(layerId)
+              ? <span className="sketch-compare-absent">not in stack</span>
+              : <>
+                  <span className={`sketch-phase-badge sketch-phase-${a.phases[layerId] ?? 'mvp'}`}>
+                    {(a.phases[layerId] ?? 'mvp') === 'mvp' ? 'MVP' : 'Growth'}
+                  </span>
+                  <span className="sketch-compare-pick">{labelForPickId(a.picks[layerId]) || '—'}</span>
+                </>
 
-          const rowClass = `sketch-compare-row sketch-compare-row-${status}`
+            const cellB = !b.layers.includes(layerId)
+              ? <span className="sketch-compare-absent">not in stack</span>
+              : <>
+                  <span className={`sketch-phase-badge sketch-phase-${b.phases[layerId] ?? 'mvp'}`}>
+                    {(b.phases[layerId] ?? 'mvp') === 'mvp' ? 'MVP' : 'Growth'}
+                  </span>
+                  <span className="sketch-compare-pick">{labelForPickId(b.picks[layerId]) || '—'}</span>
+                </>
 
-          const CellA = () => {
-            if (!a.layers.includes(layerId))
-              return <span className="sketch-compare-absent">not in stack</span>
             return (
-              <>
-                <span className={`sketch-phase-badge sketch-phase-${a.phases[layerId] ?? 'mvp'}`}>
-                  {(a.phases[layerId] ?? 'mvp') === 'mvp' ? 'MVP' : 'Growth'}
-                </span>
-                <span className="sketch-compare-pick">
-                  {labelForPickId(a.picks[layerId]) || '—'}
-                </span>
-              </>
+              <tr key={layerId} className={`sketch-compare-row-${status}`}>
+                <th scope="row" className="sketch-compare-label-col">
+                  <span className="sketch-compare-layer-name">{layer.shortName}</span>
+                  {status !== 'same' && (
+                    <span className="sketch-compare-diff-badge" aria-label="differs">≠</span>
+                  )}
+                </th>
+                <td className="sketch-compare-a-col">{cellA}</td>
+                <td className="sketch-compare-b-col">{cellB}</td>
+              </tr>
             )
-          }
-
-          const CellB = () => {
-            if (!b.layers.includes(layerId))
-              return <span className="sketch-compare-absent">not in stack</span>
-            return (
-              <>
-                <span className={`sketch-phase-badge sketch-phase-${b.phases[layerId] ?? 'mvp'}`}>
-                  {(b.phases[layerId] ?? 'mvp') === 'mvp' ? 'MVP' : 'Growth'}
-                </span>
-                <span className="sketch-compare-pick">
-                  {labelForPickId(b.picks[layerId]) || '—'}
-                </span>
-              </>
-            )
-          }
-
-          return (
-            <div key={layerId} className={rowClass} role="row">
-              <div className="sketch-compare-label-col">
-                <span className="sketch-compare-layer-name">{layer.shortName}</span>
-                {status !== 'same' && (
-                  <span className="sketch-compare-diff-badge" aria-label="differs">≠</span>
-                )}
-              </div>
-              <div className="sketch-compare-a-col">
-                <CellA />
-              </div>
-              <div className="sketch-compare-b-col">
-                <CellB />
-              </div>
-            </div>
-          )
-        })}
-      </div>
+          })}
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -611,6 +630,17 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
           {!compareMode && (
             <button type="button" className="segment-btn" onClick={enterCompareMode}>
               Fork &amp; compare →
+            </button>
+          )}
+          {!compareMode && (
+            <button
+              type="button"
+              className="segment-btn"
+              onClick={() =>
+                onNavigate({ tab: 'builder', anchor: `from-sketch/${encodeSketchState(state)}` })
+              }
+            >
+              Refine in builder →
             </button>
           )}
         </div>
