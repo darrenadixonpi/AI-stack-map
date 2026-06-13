@@ -11,6 +11,11 @@
  */
 export const config = { runtime: 'edge' }
 
+// Vercel injects env vars on `process.env` at runtime. Declare it for the
+// type-checker so we don't need @types/node (Edge isn't Node, and the app build
+// shouldn't pull in Node globals). Module-scoped — does not affect src/.
+declare const process: { env: Record<string, string | undefined> }
+
 const REPO = process.env.GITHUB_REPO ?? 'darrenadixonpi/AI-stack-map'
 const LABEL = process.env.SUGGEST_LABEL ?? 'content'
 const MIN_LEN = 10
