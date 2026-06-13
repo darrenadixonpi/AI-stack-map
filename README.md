@@ -31,6 +31,7 @@ npm run dev
 ```bash
 npm run build
 npm run preview
+npm run validate   # data integrity: IDs, cross-references, builder anchors
 ```
 
 ## Structure

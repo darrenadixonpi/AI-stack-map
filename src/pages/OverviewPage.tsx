@@ -4,6 +4,7 @@ import { jobs } from '../data/jobs'
 import { harnessFrameworkObs } from '../data/comparisons'
 import { maturityStages } from '../data/maturity'
 import { roleGuides } from '../data/roles'
+import { changelog } from '../data/changelog'
 import { scrollToAnchor } from '../utils/openAnchor'
 import { targetForJob } from '../utils/jobNavigation'
 import type { NavigationTarget } from '../navigation'
@@ -62,14 +63,14 @@ export function OverviewPage({ onNavigate, scrollTo }: Props) {
         </p>
       </div>
 
-      <details className="overview-more" id="overview-more">
+      <details className="overview-more" id="overview-more" aria-label="More navigation options: layers, role guides, and maturity stages">
         <summary>More ways in (layers, role, maturity)</summary>
         <div className="overview-more-body">
           <h3 id="stack-layers">Stack layers</h3>
           <p className="lead">Click a layer to see tool types and what you can skip for now.</p>
           <LayerDiagram />
 
-          <details className="nested-details" id="role-hub">
+          <details className="nested-details" id="role-hub" aria-label="Role guides">
             <summary>By role ({roleGuides.length} guides)</summary>
             <div className="hub-grid compact-hub">
               {roleGuides.map((role) => (
@@ -98,7 +99,7 @@ export function OverviewPage({ onNavigate, scrollTo }: Props) {
             </div>
           </details>
 
-          <details className="nested-details" id="maturity-hub">
+          <details className="nested-details" id="maturity-hub" aria-label="Maturity stages">
             <summary>By maturity ({maturityStages.length} stages)</summary>
             <div className="hub-grid compact-hub">
               {maturityStages.map((stage) => (
@@ -138,6 +139,25 @@ export function OverviewPage({ onNavigate, scrollTo }: Props) {
               Open full comparison →
             </button>
           </details>
+        </div>
+      </details>
+
+      <details className="nested-details" id="changelog" aria-label="What's changed">
+        <summary>What's changed — v{changelog[0].version}</summary>
+        <div className="changelog-body">
+          {changelog.map((entry) => (
+            <div key={entry.version} className="changelog-entry">
+              <p className="changelog-heading">
+                <strong>v{entry.version}</strong>
+                <span className="changelog-date">{entry.date}</span>
+              </p>
+              <ul>
+                {entry.changes.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </details>
     </>

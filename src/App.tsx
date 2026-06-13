@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { GlobalSearch } from './components/GlobalSearch'
 import { FeedbackLink } from './components/FeedbackLink'
 import { ThemeToggle } from './components/ThemeToggle'
@@ -8,14 +8,15 @@ import type { NavigationTarget, TabId } from './navigation'
 import { parseHash, targetToHash } from './navigation'
 import { isCatalogViewAnchor } from './utils/catalogAnchor'
 import { scrollToAnchor, syncHeaderScrollOffset } from './utils/openAnchor'
-import { OverviewPage } from './pages/OverviewPage'
-import { UseCasesPage } from './pages/UseCasesPage'
-import { StackBuilderPage } from './pages/StackBuilderPage'
-import { CatalogPage } from './pages/CatalogPage'
-import { ComparePage } from './pages/ComparePage'
-import { GlossaryPage } from './pages/GlossaryPage'
-import { LandscapePage } from './pages/LandscapePage'
-import { StackSketchPage } from './pages/StackSketchPage'
+
+const OverviewPage = lazy(() => import('./pages/OverviewPage').then((m) => ({ default: m.OverviewPage })))
+const UseCasesPage = lazy(() => import('./pages/UseCasesPage').then((m) => ({ default: m.UseCasesPage })))
+const StackBuilderPage = lazy(() => import('./pages/StackBuilderPage').then((m) => ({ default: m.StackBuilderPage })))
+const CatalogPage = lazy(() => import('./pages/CatalogPage').then((m) => ({ default: m.CatalogPage })))
+const ComparePage = lazy(() => import('./pages/ComparePage').then((m) => ({ default: m.ComparePage })))
+const GlossaryPage = lazy(() => import('./pages/GlossaryPage').then((m) => ({ default: m.GlossaryPage })))
+const LandscapePage = lazy(() => import('./pages/LandscapePage').then((m) => ({ default: m.LandscapePage })))
+const StackSketchPage = lazy(() => import('./pages/StackSketchPage').then((m) => ({ default: m.StackSketchPage })))
 
 export type { NavigationTarget, TabId }
 
@@ -191,7 +192,11 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="app-main">{renderPage()}</main>
+      <main className="app-main">
+        <Suspense fallback={<div className="page-loading" aria-live="polite">Loading…</div>}>
+          {renderPage()}
+        </Suspense>
+      </main>
       <footer className="app-main footer-note">
         <p>
           Map v{MAP_VERSION} · Last updated {MAP_LAST_UPDATED}. Neutral map — layers first, brands

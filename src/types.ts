@@ -9,6 +9,7 @@ export type LayerId =
 
 export type SkillFloor = 'low' | 'medium' | 'high'
 export type LicenseType = 'oss' | 'commercial' | 'both'
+export type EntryStatus = 'active' | 'acquired' | 'deprecated' | 'pivoted'
 
 export type RelatedRef = string
 
@@ -65,6 +66,7 @@ export interface Tool {
   license: LicenseType
   skillFloor: SkillFloor
   lastReviewed?: string
+  status?: EntryStatus
   related?: RelatedRef[]
 }
 
@@ -200,5 +202,7 @@ export interface ApplicationProduct {
   useWhen: string
   skipIf: string
   buildVsBuy: string
+  lastReviewed?: string
+  status?: EntryStatus
   related?: RelatedRef[]
 }

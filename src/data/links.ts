@@ -9,6 +9,11 @@ import { tools } from './tools'
 /** Format: `glossary:id` | `compare:id` | `pattern:id` | `tool:id` | `app:id` | `landscape:…` */
 export type RelatedRef = string
 
+/** Sections rendered on the Compare tab that are not entries in `comparisons` */
+const SPECIAL_COMPARE_ANCHORS: Record<string, string> = {
+  'harness-framework-obs': 'Harness vs framework vs observability',
+}
+
 export function resolveRelated(ref: RelatedRef): NavigationTarget | null {
   const [kind, id] = ref.split(':')
   if (!id) return null
@@ -16,6 +21,7 @@ export function resolveRelated(ref: RelatedRef): NavigationTarget | null {
     case 'glossary':
       return glossaryTerms.some((t) => t.id === id) ? { tab: 'glossary', anchor: id } : null
     case 'compare':
+      if (SPECIAL_COMPARE_ANCHORS[id]) return { tab: 'compare', anchor: id }
       return comparisons.some((c) => c.id === id) ? { tab: 'compare', anchor: id } : null
     case 'pattern':
       return stackPatterns.some((p) => p.id === id) ? { tab: 'patterns', anchor: id } : null
@@ -45,6 +51,7 @@ export function labelForRelated(ref: RelatedRef): string {
       return t ? t.term : id
     }
     case 'compare': {
+      if (SPECIAL_COMPARE_ANCHORS[id]) return SPECIAL_COMPARE_ANCHORS[id]
       const c = comparisons.find((x) => x.id === id)
       return c ? c.title : id
     }

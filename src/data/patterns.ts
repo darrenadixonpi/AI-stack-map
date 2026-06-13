@@ -243,6 +243,6 @@ export const stackPatterns: StackPattern[] = [
       'No eval set aligned to production task',
     ],
     usuallySkip: ['Large agent orchestration', 'Vector DB unless hybrid RAG+FT'],
-    related: ['compare:rag-finetune', 'glossary:peft', 'pattern:fine-tune-domain'],
+    related: ['compare:rag-finetune', 'glossary:peft', 'glossary:fine-tuning'],
   },
 ]

@@ -30,7 +30,7 @@ export const roleGuides: RoleGuide[] = [
     startHere: ['Eval harness + labeled set', 'Offline metrics before prod', 'Versioned prompts/models'],
     skipForNow: ['No-code flow builders for prod', 'Marketing “agent platform” as default'],
     links: [
-      { label: 'Compare models (job)', target: { tab: 'overview' } },
+      { label: 'Compare models (job)', target: { tab: 'overview', anchor: 'compare-models' } },
       { label: 'Harness vs observability', target: { tab: 'compare', anchor: 'harness-framework-obs' } },
       { label: 'RAG vs fine-tuning', target: { tab: 'compare', anchor: 'rag-finetune' } },
     ],
@@ -56,7 +56,7 @@ export const roleGuides: RoleGuide[] = [
     links: [
       { label: 'Stack builder', target: { tab: 'builder' } },
       { label: 'Do I need an agent?', target: { tab: 'builder', anchor: 'agent-tree' } },
-      { label: 'Stack builder', target: { tab: 'builder' } },
+      { label: 'Stack patterns', target: { tab: 'patterns' } },
     ],
   },
   {

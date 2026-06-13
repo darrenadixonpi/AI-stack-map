@@ -22,7 +22,8 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
   const [state, setState] = useState<StackSketchState>(() => {
     return decodeSketchState(scrollTo) ?? emptySketchState()
   })
-  const [copyStatus, setCopyStatus] = useState<string | null>(null)
+  const [copiedMd, setCopiedMd] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
 
   useEffect(() => {
     const decoded = decodeSketchState(scrollTo)
@@ -101,21 +102,21 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
     const md = sketchToMarkdown(state)
     try {
       await navigator.clipboard.writeText(md)
-      setCopyStatus('Copied markdown to clipboard')
+      setCopiedMd(true)
+      setTimeout(() => setCopiedMd(false), 1500)
     } catch {
-      setCopyStatus('Copy failed — select text manually')
+      // silently ignore — browser may block clipboard without user gesture
     }
-    setTimeout(() => setCopyStatus(null), 3000)
   }
 
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl)
-      setCopyStatus('Copied share link')
+      setCopiedLink(true)
+      setTimeout(() => setCopiedLink(false), 1500)
     } catch {
-      setCopyStatus('Copy failed')
+      // silently ignore
     }
-    setTimeout(() => setCopyStatus(null), 3000)
   }
 
   const [ignoreDraft, setIgnoreDraft] = useState('')
@@ -235,12 +236,7 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
                   <button
                     type="button"
                     className="nav-chip nav-chip-inline"
-                    onClick={() =>
-                      onNavigate({
-                        tab: 'catalog',
-                        anchor: pick.startsWith('app:') ? catalogAnchor : catalogAnchor,
-                      })
-                    }
+                    onClick={() => onNavigate({ tab: 'catalog', anchor: catalogAnchor })}
                   >
                     Open in catalog →
                   </button>
@@ -303,17 +299,12 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
         <h3>Export</h3>
         <div className="sketch-export-actions">
           <button type="button" className="segment-btn" onClick={handleCopyMarkdown}>
-            Copy markdown plan
+            {copiedMd ? 'Copied ✓' : 'Copy markdown plan'}
           </button>
           <button type="button" className="segment-btn" onClick={handleCopyLink}>
-            Copy share link
+            {copiedLink ? 'Copied ✓' : 'Copy share link'}
           </button>
         </div>
-        {copyStatus && (
-          <p style={{ fontSize: '0.85rem', color: 'var(--accent)', marginTop: '0.5rem' }}>
-            {copyStatus}
-          </p>
-        )}
         <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.75rem' }}>
           Share link encodes this sketch in the URL (no server storage).
         </p>

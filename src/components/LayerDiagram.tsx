@@ -23,21 +23,15 @@ export function LayerDiagram() {
         Most confusion is cross-layer — comparing a vector DB to an agent framework. Click a layer
         for tool types and what you can skip for now.
       </p>
-      <div className="layer-stack" role="list">
+      <div className="layer-stack">
         {ordered.map((layer) => (
-          <div
+          <button
             key={layer.id}
-            role="listitem"
+            type="button"
             className={`layer-row${selected === layer.id ? ' selected' : ''}`}
             onClick={() => setSelected(selected === layer.id ? null : layer.id)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                setSelected(selected === layer.id ? null : layer.id)
-              }
-            }}
-            tabIndex={0}
             aria-expanded={selected === layer.id}
+            aria-label={`${layer.name} — ${selected === layer.id ? 'collapse' : 'expand'} detail`}
           >
             <div
               className="layer-bar"
@@ -48,7 +42,7 @@ export function LayerDiagram() {
               <div className="layer-name">{layer.name}</div>
               <div className="layer-desc">{layer.description}</div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
       {detail && (

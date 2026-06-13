@@ -23,10 +23,10 @@ Living plan for content and product work. Map version in the app footer (`src/da
 
 | Item | Notes |
 |------|--------|
-| Tab bar overflow on small screens | Horizontal scroll or “More” menu |
+| Tab bar overflow on small screens | Quick fix: `overflow-x: auto; -webkit-overflow-scrolling: touch` on `.nav-tabs` + `white-space: nowrap` on `.nav-tab`. Clips at ~360 px today. |
 | Catalog / sketch deep links | Ensure `app-*` opens enterprise apps view reliably |
 | Content review pass | Align `package.json` version with `MAP_VERSION` |
-| Real `VITE_GITHUB_ISSUES_URL` | Wire suggest-edit when repo is public |
+| Suggest-edit wiring | Repo uses `VITE_GITHUB_REPO` (see `.env.example`); create the `content` label once repo is public |
 | Accessibility audit | Focus order on sketch selects, compare segment rows |
 
 ---

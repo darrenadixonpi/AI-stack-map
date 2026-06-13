@@ -13,6 +13,8 @@ export interface SketchPickOption {
 
 const SKIP_OPTION: SketchPickOption = { id: '', label: '— Decide later —', kind: 'skip' }
 
+// If a layer gains more tools than these caps, extras are silently dropped from
+// the sketch pick dropdown. Raise the cap or split the layer before that happens.
 const MAX_TOOLS_PER_LAYER = 6
 const MAX_APPS_PER_LAYER = 3
 
@@ -26,8 +28,14 @@ export function getSketchPicksForLayer(layerId: LayerId): SketchPickOption[] {
     kind: 'type',
   }))
 
-  const toolOpts: SketchPickOption[] = tools
-    .filter((t) => t.layer === layerId)
+  const layerTools = tools.filter((t) => t.layer === layerId)
+  if (import.meta.env.DEV && layerTools.length > MAX_TOOLS_PER_LAYER) {
+    console.warn(
+      `sketchPicks: layer "${layerId}" has ${layerTools.length} tools but MAX_TOOLS_PER_LAYER=${MAX_TOOLS_PER_LAYER}. ` +
+        `${layerTools.length - MAX_TOOLS_PER_LAYER} tool(s) will be hidden from the sketch dropdown.`,
+    )
+  }
+  const toolOpts: SketchPickOption[] = layerTools
     .slice(0, MAX_TOOLS_PER_LAYER)
     .map((t) => ({
       id: `tool:${t.id}`,
@@ -35,8 +43,8 @@ export function getSketchPicksForLayer(layerId: LayerId): SketchPickOption[] {
       kind: 'tool',
     }))
 
-  const appOpts: SketchPickOption[] = applicationProducts
-    .filter((a) => a.stackLayers.includes(layerId))
+  const layerApps = applicationProducts.filter((a) => a.stackLayers.includes(layerId))
+  const appOpts: SketchPickOption[] = layerApps
     .slice(0, MAX_APPS_PER_LAYER)
     .map((a) => ({
       id: `app:${a.id}`,

@@ -27,9 +27,23 @@ interface Props {
   title: string
 }
 
+const FLOW_LEGEND = [
+  { className: 'flow-legend-pipeline', label: 'Main path' },
+  { className: 'flow-legend-envelope', label: 'Wraps flow' },
+  { className: 'flow-legend-supporting', label: 'Also in play' },
+  { className: 'flow-legend-feedback', label: '↺ Feedback loop' },
+]
+
 export function PatternFlowDiagram({ diagram, title }: Props) {
   return (
     <figure className="pattern-flow" aria-label={`${title} architecture flow`}>
+      <figcaption className="flow-legend" aria-label="Diagram legend">
+        {FLOW_LEGEND.map(({ className, label }) => (
+          <span key={label} className={`flow-legend-item ${className}`}>
+            {label}
+          </span>
+        ))}
+      </figcaption>
       {diagram.envelope && diagram.envelope.length > 0 && (
         <div className="flow-row flow-envelope">
           <span className="flow-row-label">Wraps flow</span>

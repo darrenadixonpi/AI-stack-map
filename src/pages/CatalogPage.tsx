@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { RelatedLinks } from '../components/RelatedLinks'
 import { applicationProducts } from '../data/applicationTools'
 import {
@@ -16,6 +16,7 @@ import {
   type CatalogView,
 } from '../utils/catalogAnchor'
 import { scrollToAnchor } from '../utils/openAnchor'
+import { suggestEditUrl } from '../utils/feedback'
 
 interface Props {
   onNavigate: (t: NavigationTarget) => void
@@ -33,6 +34,7 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
     parsed.applicationCategory ?? 'all',
   )
   const [marketFilter, setMarketFilter] = useState<'all' | 'horizontal' | 'vertical'>('all')
+  const [, startTransition] = useTransition()
 
   useEffect(() => {
     const next = parseCatalogAnchor(scrollTo)
@@ -44,6 +46,16 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
       setCategoryFilter('all')
       setLayerFilter('all')
     }
+    // Deep link to a specific card: clear any filter that could hide it
+    if (scrollTo?.startsWith('app-')) {
+      setMarketFilter('all')
+      setAppCategoryFilter('all')
+      setQuery('')
+    } else if (scrollTo?.startsWith('tool-')) {
+      setLayerFilter('all')
+      setCategoryFilter('all')
+      setQuery('')
+    }
   }, [scrollTo])
 
   useEffect(() => {
@@ -54,7 +66,7 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
   }, [scrollTo])
 
   const setCatalogView = (next: CatalogView, appCategory?: ApplicationCategoryId) => {
-    setView(next)
+    startTransition(() => setView(next))
     if (next === 'apps') {
       setLayerFilter('all')
       setCategoryFilter('all')
@@ -70,6 +82,18 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
     const anchor = catalogAnchorForApps(cat === 'all' ? undefined : cat)
     onAnchorChange?.(anchor)
     history.replaceState(null, '', `#/catalog/${anchor}`)
+  }
+
+  const resetStackFilters = () => {
+    setLayerFilter('all')
+    setCategoryFilter('all')
+    setQuery('')
+  }
+
+  const resetAppFilters = () => {
+    setMarketFilter('all')
+    setAppCategoryFilter('all')
+    setQuery('')
   }
 
   const filteredStack = useMemo(() => {
@@ -248,9 +272,24 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
 
       {view === 'stack' ? (
         <div className="tool-list">
+          {filteredStack.length === 0 && (
+            <p className="catalog-empty">
+              No stack tools match these filters.{' '}
+              <button type="button" className="nav-chip nav-chip-inline" onClick={resetStackFilters}>
+                Clear filters
+              </button>
+            </p>
+          )}
           {filteredStack.map((tool) => (
             <article key={tool.id} id={`tool-${tool.id}`} className="card tool-card">
-              <h4>{tool.name}</h4>
+              <h4>
+                {tool.name}
+                {tool.status && tool.status !== 'active' && (
+                  <span className={`badge badge-status badge-status-${tool.status}`}>
+                    {tool.status}
+                  </span>
+                )}
+              </h4>
               <div className="tool-meta">
                 <span className="badge">{layers.find((l) => l.id === tool.layer)?.shortName}</span>
                 <span>{tool.category}</span>
@@ -270,14 +309,37 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
                 {tool.buildVsBuy}
               </p>
               {tool.related && <RelatedLinks refs={tool.related} onNavigate={onNavigate} />}
+              <a
+                className="suggest-edit-link"
+                href={suggestEditUrl({ section: 'Tool catalog', topicName: tool.name, topicId: tool.id })}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ✎ suggest edit
+              </a>
             </article>
           ))}
         </div>
       ) : (
         <div className="tool-list">
+          {filteredApps.length === 0 && (
+            <p className="catalog-empty">
+              No enterprise apps match these filters.{' '}
+              <button type="button" className="nav-chip nav-chip-inline" onClick={resetAppFilters}>
+                Clear filters
+              </button>
+            </p>
+          )}
           {filteredApps.map((app) => (
             <article key={app.id} id={`app-${app.id}`} className="card tool-card app-card">
-              <h4>{app.name}</h4>
+              <h4>
+                {app.name}
+                {app.status && app.status !== 'active' && (
+                  <span className={`badge badge-status badge-status-${app.status}`}>
+                    {app.status}
+                  </span>
+                )}
+              </h4>
               <div className="tool-meta">
                 <span className="badge badge-market">{app.market}</span>
                 <span>{categoryLabel(app.applicationCategory)}</span>
@@ -299,6 +361,14 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
                 <strong>Build vs buy:</strong> {app.buildVsBuy}
               </p>
               {app.related && <RelatedLinks refs={app.related} onNavigate={onNavigate} />}
+              <a
+                className="suggest-edit-link"
+                href={suggestEditUrl({ section: 'Tool catalog', topicName: app.name, topicId: app.id })}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ✎ suggest edit
+              </a>
             </article>
           ))}
         </div>

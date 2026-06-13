@@ -9,7 +9,7 @@ export function AgentDecisionTree({ onReset }: { onReset?: () => void }) {
 
   if (node.outcome) {
     return (
-      <div className="agent-tree-box" id="agent-tree">
+      <div className="agent-tree-box">
         <div className={`agent-outcome outcome-${node.outcomeType ?? 'default'}`}>
           <p>{node.outcome}</p>
         </div>
@@ -34,7 +34,7 @@ export function AgentDecisionTree({ onReset }: { onReset?: () => void }) {
   }
 
   return (
-    <div className="agent-tree-box" id="agent-tree">
+    <div className="agent-tree-box">
       <p className="agent-question">{node.question}</p>
       <p className="agent-hint">Pick one — neither answer is selected until you click.</p>
       <div className="agent-actions" role="group" aria-label="Answer">

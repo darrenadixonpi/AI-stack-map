@@ -1,3 +1,4 @@
+import { applicationCategories } from '../data/applicationCategories'
 import type { ApplicationCategoryId } from '../types'
 
 export type CatalogView = 'stack' | 'apps'
@@ -14,10 +15,18 @@ const APP_CATEGORY_PREFIX = 'apps/'
 export function parseCatalogAnchor(anchor?: string): ParsedCatalogAnchor {
   if (!anchor) return { view: 'stack' }
   if (anchor === 'apps' || anchor.startsWith(APP_CATEGORY_PREFIX)) {
-    const cat = anchor.startsWith(APP_CATEGORY_PREFIX)
-      ? (anchor.slice(APP_CATEGORY_PREFIX.length) as ApplicationCategoryId)
+    const candidateId = anchor.startsWith(APP_CATEGORY_PREFIX)
+      ? anchor.slice(APP_CATEGORY_PREFIX.length)
       : undefined
-    return { view: 'apps', applicationCategory: cat }
+    const validCategory = candidateId
+      ? applicationCategories.find((c) => c.id === candidateId)
+      : undefined
+    return {
+      view: 'apps',
+      applicationCategory: validCategory
+        ? (candidateId as ApplicationCategoryId)
+        : undefined,
+    }
   }
   if (anchor.startsWith('app-')) {
     return { view: 'apps', appId: anchor.slice(4) }
