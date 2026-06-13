@@ -12,6 +12,8 @@ import {
 } from '../utils/sketchState'
 import { sketchToMarkdown } from '../utils/sketchMarkdown'
 import { getSketchHints } from '../utils/sketchHints'
+import { getRelevantComparisons } from '../utils/sketchCompares'
+import { comparisons } from '../data/comparisons'
 import type { LayerId, SketchPhase, StackSketchState } from '../types'
 import type { NavigationTarget } from '../navigation'
 
@@ -484,6 +486,17 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
     }
   }
 
+  const handleDownloadJson = () => {
+    const json = JSON.stringify(state, null, 2)
+    const blob = new Blob([json], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${state.title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.sketch.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl)
@@ -591,6 +604,11 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
             {copiedLink ? 'Copied ✓' : compareMode ? 'Copy compare link' : 'Copy share link'}
           </button>
           {!compareMode && (
+            <button type="button" className="segment-btn" onClick={handleDownloadJson}>
+              Download JSON
+            </button>
+          )}
+          {!compareMode && (
             <button type="button" className="segment-btn" onClick={enterCompareMode}>
               Fork &amp; compare →
             </button>
@@ -601,6 +619,28 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
             ? 'Compare link encodes both sketches in the URL (no server storage).'
             : 'Share link encodes this sketch in the URL (no server storage).'}
         </p>
+        {!compareMode && (() => {
+          const ids = getRelevantComparisons(state.layers)
+          const matches = ids.map((id) => comparisons.find((c) => c.id === id)).filter(Boolean)
+          if (matches.length === 0) return null
+          return (
+            <div className="sketch-compare-suggestions">
+              <p className="sketch-compare-suggestions-label">Related comparisons for your stack:</p>
+              <div className="sketch-compare-suggestions-list">
+                {matches.map((c) => (
+                  <button
+                    key={c!.id}
+                    type="button"
+                    className="nav-chip nav-chip-inline"
+                    onClick={() => onNavigate({ tab: 'compare', anchor: c!.id })}
+                  >
+                    {c!.title} →
+                  </button>
+                ))}
+              </div>
+            </div>
+          )
+        })()}
       </div>
     </>
   )

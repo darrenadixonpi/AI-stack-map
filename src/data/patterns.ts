@@ -199,6 +199,85 @@ export const stackPatterns: StackPattern[] = [
     related: ['glossary:structured-output', 'compare:structured-output-tools', 'glossary:harness'],
   },
   {
+    id: 'multimodal-input',
+    title: 'Multimodal input pipeline (image / audio / document)',
+    shortLabel: 'Multimodal',
+    summary:
+      'Process images, audio, or mixed documents through a vision or audio model and route structured results downstream — no retrieval loop needed.',
+    diagram: {
+      envelope: [{ id: 'ui', label: 'Upload / webhook surface', layer: 'product' }],
+      pipeline: [
+        { id: 'validate', label: 'Validate & pre-process file', layer: 'product' },
+        { id: 'call', label: 'Multimodal model call', layer: 'model-access' },
+        { id: 'extract', label: 'Extract structured result', layer: 'capabilities' },
+        { id: 'route', label: 'Route / store output', layer: 'data' },
+      ],
+      supporting: [
+        { id: 'eval', label: 'Eval on edge-case inputs', layer: 'build-ship' },
+        { id: 'cost', label: 'Token / file cost monitoring', layer: 'build-ship' },
+      ],
+      excludes: ['Vector DB (unless outputs feed RAG)', 'Agent loop', 'Fine-tune for most cases'],
+    },
+    layers: ['product', 'capabilities', 'model-access', 'data', 'build-ship'],
+    mvp: [
+      'Multimodal model API (GPT-4o, Claude Vision, Gemini)',
+      'File upload + basic format validation',
+      'Structured output / JSON mode for extraction',
+      'Simple store for results',
+    ],
+    production: [
+      'Eval set covering edge cases (blurry, rotated, mixed-language)',
+      'Cost monitoring per file type and size',
+      'Fallback routing for unsupported formats',
+      'PII redaction if images contain sensitive data',
+    ],
+    mistakes: [
+      'Treating OCR and vision as equivalent — vision models handle layout and context, OCR does not',
+      'Skipping eval: multimodal quality degrades sharply on edge inputs',
+      'Sending raw high-res files without resize — token cost scales with image dimensions',
+    ],
+    usuallySkip: ['Fine-tuning on visual tasks before eval shows it helps', 'Vector DB unless outputs feed a RAG pipeline', 'Agent loop for fixed extraction tasks'],
+    related: ['glossary:structured-output', 'compare:structured-output-tools'],
+  },
+  {
+    id: 'gateway-internal',
+    title: 'Gateway-only internal tool (no custom product layer)',
+    shortLabel: 'Gateway tool',
+    summary:
+      'Route all team LLM calls through a central gateway — no custom UI, just policy, cost controls, logging, and model routing.',
+    diagram: {
+      pipeline: [
+        { id: 'gateway', label: 'LLM gateway (LiteLLM / Portkey)', layer: 'governance' },
+        { id: 'route', label: 'Route to model(s)', layer: 'model-access' },
+      ],
+      supporting: [
+        { id: 'auth', label: 'Key management & auth', layer: 'governance' },
+        { id: 'budget', label: 'Per-team budget caps', layer: 'governance' },
+        { id: 'log', label: 'Audit log + tracing', layer: 'build-ship' },
+      ],
+      excludes: ['Custom product UI', 'RAG pipeline', 'Agent orchestration'],
+    },
+    layers: ['model-access', 'governance', 'build-ship'],
+    mvp: [
+      'LiteLLM or Portkey proxy in front of model APIs',
+      'API key abstraction per team or service',
+      'Basic usage logging',
+    ],
+    production: [
+      'Per-team and per-model spend caps',
+      'Fallback routing (e.g. Azure OpenAI → OpenAI on failure)',
+      'Audit log for compliance',
+      'Rate limits and model allowlists per consumer',
+    ],
+    mistakes: [
+      'Letting teams call model APIs directly — loses spend visibility and key rotation control',
+      'No auth on the gateway itself — internal does not mean safe to expose',
+      'Skipping logs: the first cost spike will be invisible without them',
+    ],
+    usuallySkip: ['Custom UI', 'RAG stack', 'Fine-tuning', 'Agent framework'],
+    related: ['glossary:gateway', 'compare:compliance-residency', 'compare:local-api'],
+  },
+  {
     id: 'fine-tune-domain',
     title: 'Fine-tuned domain model',
     shortLabel: 'Fine-tune',

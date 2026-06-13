@@ -1399,6 +1399,24 @@ table.compare-table th {
   background: var(--border);
 }
 
+.sketch-compare-suggestions {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.sketch-compare-suggestions-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.sketch-compare-suggestions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
 .builder-output-header {
   display: flex;
   flex-wrap: wrap;

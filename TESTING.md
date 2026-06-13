@@ -6,6 +6,26 @@ Legend: `[ ]` untested · `[~]` partial / uncertain · `[x]` confirmed good · `
 
 ---
 
+## v1.8.0 — Compare from sketch, new patterns, catalog growth, JSON export
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-c1 | Compare from sketch | Sketch with Orchestration layer → export card shows "Agent vs workflow" and "LangChain vs LlamaIndex" links | |
+| T-c2 | Compare from sketch | Sketch with Capabilities + Data → shows "RAG vs fine-tuning" and "Vector DB vs pgvector" | |
+| T-c3 | Compare from sketch | Sketch with no layers → no compare suggestions shown | |
+| T-c4 | Compare from sketch | Clicking a suggestion navigates to the Compare tab on the right topic | |
+| T-j1 | JSON export | "Download JSON" button appears in export card (single-sketch mode only) | |
+| T-j2 | JSON export | Clicking it downloads a `.sketch.json` file named after the sketch title | |
+| T-j3 | JSON export | Downloaded JSON contains valid `title`, `layers`, `picks`, `phases`, `ignore` fields | |
+| T-p1 | New patterns | "Multimodal" and "Gateway tool" appear in the pattern selector | |
+| T-p2 | New patterns | Multimodal pattern: layers = product, capabilities, model-access, data, build-ship | |
+| T-p3 | New patterns | Gateway tool pattern: layers = model-access, governance, build-ship | |
+| T-p4 | New patterns | "Sketch this pattern →" works for both new patterns | |
+| T-t1 | New tools | Qdrant, Instructor, Groq API, DSPy, Haystack appear in Tool catalog | |
+| T-t2 | New tools | Each has correct layer assignment (Qdrant=data, Instructor=capabilities, Groq=model-access, DSPy/Haystack=orchestration) | |
+
+---
+
 ## v1.7.2 — Sketch validation hints
 
 | # | Area | What to check | Notes |

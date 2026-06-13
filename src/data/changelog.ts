@@ -10,6 +10,16 @@ export interface ChangelogEntry {
  */
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.8.0',
+    date: '2026-06-13',
+    changes: [
+      'Sketch export: surface up to 3 relevant Compare topics based on your layer picks',
+      'Sketch export: Download JSON button saves sketch state as a portable .json file',
+      'New patterns: Multimodal input pipeline + Gateway-only internal tool (7 patterns total)',
+      'Catalog: 5 new tools — Qdrant, Instructor, Groq, DSPy, Haystack (57 total)',
+    ],
+  },
+  {
     version: '1.7.2',
     date: '2026-06-13',
     changes: [
