@@ -1,5 +1,7 @@
 # AI Stack Map — Platform Outline
 
+> **Status (2026-06):** The platform described here is **built and live (v1.14.0)**. This remains the product spec and content principles; for what's shipped and what's next, see `ROADMAP.md`. The "MVP build order" and "handoff checklist" below are historical.
+
 **Purpose:** Handoff document for building a practitioner-oriented platform that answers:
 
 > *“The AI space is huge — agents, harnesses, frameworks, APIs, vector DBs, eval tools… **what do I actually use for my job?**”*

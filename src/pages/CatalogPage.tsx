@@ -17,7 +17,7 @@ import {
   type CatalogView,
 } from '../utils/catalogAnchor'
 import { scrollToAnchor } from '../utils/openAnchor'
-import { suggestEditUrl } from '../utils/feedback'
+import { FeedbackLink } from '../components/FeedbackLink'
 
 interface Props {
   onNavigate: (t: NavigationTarget) => void
@@ -338,14 +338,13 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
                 {tool.buildVsBuy}
               </p>
               {tool.related && <RelatedLinks refs={tool.related} onNavigate={onNavigate} />}
-              <a
+              <FeedbackLink
                 className="suggest-edit-link"
-                href={suggestEditUrl({ section: 'Tool catalog', topicName: tool.name, topicId: tool.id })}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ✎ suggest edit
-              </a>
+                label="✎ suggest edit"
+                section="Tool catalog"
+                topicName={tool.name}
+                topicId={tool.id}
+              />
             </article>
           ))}
         </div>
@@ -390,14 +389,13 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
                 <strong>Build vs buy:</strong> {app.buildVsBuy}
               </p>
               {app.related && <RelatedLinks refs={app.related} onNavigate={onNavigate} />}
-              <a
+              <FeedbackLink
                 className="suggest-edit-link"
-                href={suggestEditUrl({ section: 'Tool catalog', topicName: app.name, topicId: app.id })}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ✎ suggest edit
-              </a>
+                label="✎ suggest edit"
+                section="Tool catalog"
+                topicName={app.name}
+                topicId={app.id}
+              />
             </article>
           ))}
         </div>

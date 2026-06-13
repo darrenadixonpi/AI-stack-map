@@ -1,6 +1,8 @@
 # AI Stack Map — Feature Ideas
 
-**Drafted:** 2026-06-13 · **Status:** candidate backlog for discussion (nothing committed)
+**Drafted:** 2026-06-13 · **Status:** ✅ mostly shipped in v1.10–v1.14 — kept as the rationale behind those features.
+
+> **Update (2026-06):** Waves 1–4 delivered most of this backlog. **Shipped:** eval-driven pattern, per-pattern business cases + references, plain-language glossary, sketch exports (ADR / exec / risk register / JSON), cost-latency envelope, staffing readout, readiness self-assessment, vendor + governance checklists, freshness panel, state-of-the-map, migration paths, catalog deployment facet, landscape filters, build-vs-buy, command palette, map-as-data JSON, i18n scaffold, offline PWA, embeddable widget, and the community CI kit (see [ROADMAP.md](./ROADMAP.md) "Shipped" and `src/data/changelog.ts`). **Still open:** catalog residency + latency facets (only deployment shipped), full UI translations (only the scaffold), Sketch → PDF, and analytics-free usage.
 
 A structured brainstorm of where the platform could go next, viewed from two
 audiences: **practitioners** (AI engineers / software developers who use the map
@@ -106,7 +108,7 @@ claims. Stamp it heavily with `lastReviewed`.
 
 ---
 
-## Recommended next 5 (highest value : effort, all on-ethos)
+## Recommended next 5 (highest value : effort, all on-ethos) — ✅ all shipped (v1.11–v1.13)
 
 1. **Vendor due-diligence checklist** (B) — S, evergreen, fills the governance gap, strengthens build/buy. Best ROI on the list.
 2. **Eval-driven dev loop pattern** (A) — S, already the natural next pattern; keeps the practitioner core deep.

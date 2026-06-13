@@ -10,16 +10,18 @@ Practitioner-oriented map of the AI tooling ecosystem — layers, jobs-to-be-don
 
 | Tab | Purpose |
 |-----|---------|
-| **Overview** | Jobs-to-be-done, stack layers, role/maturity hubs |
-| **Patterns** | Stack recipes with flow diagrams (MVP vs production) |
-| **Stack builder** | Rule-based recommender → layers, tiers, what to ignore |
-| **Stack sketch** | Interactive draft stack — toggle layers, picks per layer, MVP/growth, share URL |
-| **Tool catalog** | Stack tools + enterprise apps (build vs buy) |
-| **Landscape** | Enterprise app map by horizontal/vertical category |
+| **Overview** | Jobs-to-be-done, stack layers, role/maturity hubs, build-vs-buy scenarios, state-of-the-map, catalog freshness, changelog, and a map-as-data JSON export |
+| **Patterns** | 9 stack recipes with flow diagrams (MVP vs production), per-pattern business case + reference implementations, and migration / scale paths |
+| **Stack builder** | Rule-based recommender → layers, tiers, what to ignore; plus an agent decision tree and a readiness self-assessment |
+| **Stack sketch** | Interactive draft stack — layers, picks, MVP/growth, build/buy; cost & latency envelope, team & skills readout, governance lens; exports (markdown, ADR, exec summary, risk register, JSON); share + fork-and-compare URLs |
+| **Tool catalog** | Stack tools + enterprise apps, filterable by layer, category, and deployment (SaaS / self-host / both) |
+| **Landscape** | Enterprise app map by horizontal/vertical category, with name + stack-layer filters and a vendor due-diligence checklist |
 | **Compare** | Confusion matrices (framework vs harness, RAG vs fine-tune, …) |
-| **Glossary** | Category definitions with topic filters |
+| **Glossary** | Category definitions with topic filters and a plain-language ("explain for stakeholders") mode |
 
-**Roadmap:** see [ROADMAP.md](./ROADMAP.md) for planned work and non-goals.
+**Platform:** global search doubles as a **command palette** (⌘K / `/` to jump to any tab or section) · **offline PWA** (web manifest + service worker) · **embeddable** layer diagram at `/embed/layers.html` · **i18n scaffold** for UI strings · community **CI** (`validate` + `build`) with PR / issue templates.
+
+**Roadmap:** see [ROADMAP.md](./ROADMAP.md) for planned work and non-goals. Recent releases are in the in-app changelog and [`src/data/changelog.ts`](./src/data/changelog.ts).
 
 ## Development
 
@@ -36,10 +38,14 @@ npm run validate   # data integrity: IDs, cross-references, builder anchors
 
 ## Structure
 
-- `src/data/` — tools, patterns, glossary, comparisons, stack builder rules, enterprise apps
+- `src/data/` — tools, patterns, glossary, comparisons, builder rules, enterprise apps, plus build-vs-buy, governance lens, migrations, and state-of-the-map
 - `src/pages/` — tab content
-- `src/utils/sketchState.ts` — encode/decode shareable stack sketches in the URL hash
-- `OUTLINE.md` — product spec and content principles
+- `src/components/` — diagrams, search / command palette, readiness, freshness, build-vs-buy
+- `src/utils/` — sketch encode/decode and the markdown / ADR / risk-register exports, cost-latency, staffing, deployment, and map-as-data JSON
+- `src/i18n.ts` — UI-string scaffold (`t()` + dictionaries)
+- `public/` — `manifest.webmanifest`, `sw.js` (offline), `embed/layers.html` (embeddable widget)
+- `.github/` — PR + issue templates and the `validate` + `build` CI workflow
+- `ROADMAP.md` · `OUTLINE.md` · `IDEAS.md` · `TESTING.md` — plan, product spec, feature backlog, QA checklist
 
 UX inspired by [Backtest Validation Guide](https://backtest-validation-guide.vercel.app/) (tabs, glossary, interactive builder, neutral tone).
 
@@ -53,6 +59,6 @@ Flow: run **Stack builder** → **Compose stack sketch →** → adjust layers a
 
 ## Deploy
 
-Static SPA — deploy `dist/` to Vercel or any static host.
+Static SPA — deploy to **Vercel** (recommended: the `api/suggest.ts` function powers the suggest-an-edit box). On a pure static host with no functions, the app still works and suggest-an-edit falls back to prefilled GitHub issue links.
 
-**Suggest an edit:** use the header button (opens a GitHub issue with tab context pre-filled). Create a `content` label in the repo for auto-tagging. Optional env: `VITE_GITHUB_REPO` to override the repo slug (see `.env.example`).
+**Suggest an edit:** the header button and per-entry "✎ suggest edit" links open an in-app box — type a suggestion and it files a GitHub issue (labeled `content`) via the Vercel function. Set `GITHUB_TOKEN` (a fine-grained PAT with **Issues: write**) in the Vercel project; without it the box falls back to a prefilled GitHub issue link. Ctrl/Cmd-click any suggest link to skip the box and go straight to GitHub. Optional env: `GITHUB_REPO`, `SUGGEST_LABEL`, and `VITE_GITHUB_REPO` (see `.env.example`). Spam control: hidden honeypot field + length and best-effort rate limits.

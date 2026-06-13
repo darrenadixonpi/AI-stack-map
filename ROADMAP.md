@@ -6,8 +6,9 @@ Living plan for content and product work. Map version in the app footer (`src/da
 
 ---
 
-## Shipped (v1.5 – v1.14)
+## Shipped (v1.5 – v1.15)
 
+- [x] **In-app "Suggest an edit"** (v1.15) — type a suggestion → auto-files a GitHub issue via a Vercel function (`api/suggest.ts`); honeypot + limits, prefilled-link fallback
 - [x] **Build vs buy view** (v1.14) — relative effort/time/control/risk on Overview
 - [x] **Governance & compliance lens** (v1.14) — per-layer checklist + risk tiers on the sketch
 - [x] **Command palette** (v1.14) — Cmd+K jumps to any tab or key section
@@ -69,9 +70,7 @@ Living plan for content and product work. Map version in the app footer (`src/da
 
 ## P0 — Polish & correctness
 
-| Item | Notes |
-|------|--------|
-| `content` GitHub label | Create once repo is public so suggest-edit issues route correctly |
+_All clear — the `content` GitHub label exists, so suggest-edit issues and the PR/issue templates auto-route._
 
 ---
 
@@ -101,7 +100,7 @@ Living plan for content and product work. Map version in the app footer (`src/da
 |------|--------|
 | i18n | ✅ scaffold shipped (v1.14) — `t()` + EN dictionary; add a locale dict to translate UI strings |
 | Offline PWA | ✅ shipped (v1.14) — manifest + service worker cache the shell |
-| Community edits | ✅ PR + issue templates and CI (validate + build) shipped (v1.11). Next: a `content` label + auto-tagging once repo is public |
+| Community edits | ✅ shipped (v1.11) — PR + issue templates, CI (validate + build), and the `content` label for auto-tagging |
 | Analytics-free usage | Optional Plausible / none — stay privacy-friendly |
 
 ---

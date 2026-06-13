@@ -5,6 +5,8 @@
 **Scope:** All source files, data, CSS, routing, accessibility, content staleness, and build tooling.  
 **Codebase version at time of audit:** 1.5.0 (post-fix)
 
+> **Status (2026-06):** Historical snapshot at **v1.5.0**. Every bug fixed here is in main, and most recommendations (catalog + observability tools, changelog, lazy-load, suggest-edit links, sketch compare, status badges, OG image, and more) shipped through **v1.14.0** — see `ROADMAP.md` "Shipped" and `src/data/changelog.ts`. Kept as a point-in-time record.
+
 ---
 
 ## Summary

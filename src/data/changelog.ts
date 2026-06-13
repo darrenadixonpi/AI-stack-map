@@ -10,6 +10,15 @@ export interface ChangelogEntry {
  */
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.15.0',
+    date: '2026-06-13',
+    changes: [
+      'Suggest an edit: type in an in-app box and it files a GitHub issue directly (via a Vercel function that holds the token server-side)',
+      'Falls back to a prefilled GitHub issue link when the function is not configured; Ctrl/Cmd-click skips the box',
+      'Spam control: hidden honeypot field plus length and best-effort rate limits',
+    ],
+  },
+  {
     version: '1.14.0',
     date: '2026-06-13',
     changes: [

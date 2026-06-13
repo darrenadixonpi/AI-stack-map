@@ -1,5 +1,22 @@
 # AI Stack Map — Testing Backlog
 
+## v1.15.0 — In-app "Suggest an edit" → GitHub issue
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-se1 | Suggest box | Clicking "Suggest an edit" (header) or a "✎ suggest edit" link opens the in-app box, not GitHub | |
+| T-se2 | Suggest box | Submitting a valid suggestion (with `GITHUB_TOKEN` set) creates a labeled `content` issue and shows a "View issue →" link | |
+| T-se3 | Fallback | With no token configured (e.g. local `vercel dev` without env), the box shows an error + "Open a prefilled GitHub issue instead →" link | |
+| T-se4 | Fallback | Ctrl/Cmd-click on a suggest link skips the box and opens the prefilled GitHub issue directly | |
+| T-se5 | Validation | A too-short suggestion is rejected client-side with a friendly message | |
+| T-se6 | Spam | The honeypot field is visually hidden; filling it (via dev tools) returns success but files nothing | |
+| T-se7 | Context | The created issue body includes the section, topic (+ id), and page URL | |
+| T-se8 | Close | Clicking the overlay backdrop or ✕ closes the box | |
+
+**Deploy check:** set `GITHUB_TOKEN` (fine-grained PAT, Issues: write) in the Vercel project before relying on auto-submit.
+
+---
+
 ## v1.14.0 — Build vs buy, governance lens, command palette, i18n, PWA, embed
 
 | # | Area | What to check | Notes |
@@ -242,6 +259,9 @@ These should pass on every deploy regardless of what shipped.
 
 ## Known deferred / won't-test-yet
 
-- PWA / offline caching (not implemented)
-- i18n (not implemented)
-- Community PR CI validation (not implemented)
+- Sketch → PDF export (not implemented)
+- Catalog residency + latency facets (only the deployment facet shipped)
+- Full UI translations (i18n scaffold shipped; no non-English dictionary yet)
+- Analytics-free usage signal (not implemented)
+
+_Now implemented — fold these into a real browser pass: offline PWA (v1.14), i18n scaffold (v1.14), and community PR + CI validation (v1.11)._
