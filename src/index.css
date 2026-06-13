@@ -1320,6 +1320,85 @@ table.compare-table th {
   color: var(--mistake);
 }
 
+.pattern-actions {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Sketch hints ──────────────────────────────────────────────────────────── */
+
+.sketch-hints {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.sketch-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+}
+
+.sketch-hint-warning {
+  background: color-mix(in srgb, #f59e0b 10%, var(--surface));
+  border-color: color-mix(in srgb, #f59e0b 40%, transparent);
+}
+
+.sketch-hint-info {
+  background: color-mix(in srgb, #6366f1 8%, var(--surface));
+  border-color: color-mix(in srgb, #6366f1 30%, transparent);
+}
+
+[data-theme="dark"] .sketch-hint-warning {
+  background: color-mix(in srgb, #f59e0b 12%, var(--surface));
+  border-color: color-mix(in srgb, #f59e0b 35%, transparent);
+}
+
+[data-theme="dark"] .sketch-hint-info {
+  background: color-mix(in srgb, #6366f1 12%, var(--surface));
+  border-color: color-mix(in srgb, #6366f1 30%, transparent);
+}
+
+.sketch-hint-body {
+  flex: 1;
+}
+
+.sketch-hint-title {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.sketch-hint-suggestion {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.sketch-hint-dismiss {
+  font: inherit;
+  font-size: 0.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0.1rem 0.25rem;
+  border-radius: 3px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.sketch-hint-dismiss:hover {
+  color: var(--text);
+  background: var(--border);
+}
+
 .builder-output-header {
   display: flex;
   flex-wrap: wrap;

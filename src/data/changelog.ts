@@ -10,6 +10,21 @@ export interface ChangelogEntry {
  */
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.7.2',
+    date: '2026-06-13',
+    changes: [
+      'Sketch: soft validation hints fire when layer combos have known risks (agents without eval, agents without cost caps, RAG without data layer)',
+      'Hints are dismissible per session and show above the layer slots',
+    ],
+  },
+  {
+    version: '1.7.1',
+    date: '2026-06-13',
+    changes: [
+      'Patterns: "Sketch this pattern →" button pre-fills Stack sketch with that pattern\'s layers and skip list',
+    ],
+  },
+  {
     version: '1.7.0',
     date: '2026-06-12',
     changes: [

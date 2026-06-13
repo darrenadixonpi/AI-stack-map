@@ -1,5 +1,5 @@
 import { layerOrder } from '../data/layers'
-import type { BuilderResult, LayerId, StackSketchState } from '../types'
+import type { BuilderResult, LayerId, StackPattern, StackSketchState } from '../types'
 
 export function emptySketchState(): StackSketchState {
   return {
@@ -12,6 +12,21 @@ export function emptySketchState(): StackSketchState {
       'build-ship': 'mvp',
     },
     ignore: [],
+  }
+}
+
+export function sketchFromPattern(pattern: StackPattern): StackSketchState {
+  const ordered = layerOrder.filter((id) => pattern.layers.includes(id))
+  const phases: StackSketchState['phases'] = {}
+  for (const id of ordered) {
+    phases[id] = 'mvp'
+  }
+  return {
+    title: pattern.title,
+    layers: ordered,
+    picks: {},
+    phases,
+    ignore: [...pattern.usuallySkip],
   }
 }
 

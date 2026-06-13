@@ -6,6 +6,32 @@ Legend: `[ ]` untested · `[~]` partial / uncertain · `[x]` confirmed good · `
 
 ---
 
+## v1.7.2 — Sketch validation hints
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-h1 | Hints | Enable Orchestration only → two warning hints appear (no eval, no cost caps) | |
+| T-h2 | Hints | Add Build & ship → "Agent loop without observability" hint disappears | |
+| T-h3 | Hints | Add Governance → "Agents without cost caps" hint disappears | |
+| T-h4 | Hints | Enable Capabilities without Data → info hint appears | |
+| T-h5 | Hints | Enable 3+ layers with no Build & ship (no Orchestration) → info hint appears | |
+| T-h6 | Hints | Dismiss a hint → it disappears and doesn't return until page reload | |
+| T-h7 | Hints | No hints shown when sketch has no layer combinations that trigger rules | |
+
+---
+
+## v1.7.1 — Pattern → sketch
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T0a | Pattern → sketch | Each pattern card shows "Sketch this pattern →" button at the bottom | |
+| T0b | Pattern → sketch | Clicking it navigates to Stack sketch with the pattern's title pre-filled | |
+| T0c | Pattern → sketch | The correct layers are toggled on (e.g. Doc Q&A → product, data, capabilities, model-access, build-ship) | |
+| T0d | Pattern → sketch | "Ignore for now" list is pre-populated from the pattern's "Usually skip" list | |
+| T0e | Pattern → sketch | Sketch URL encodes the state — survives page reload | |
+
+---
+
 ## v1.7.0 — Sketch compare + OG image
 
 | # | Area | What to check | Notes |

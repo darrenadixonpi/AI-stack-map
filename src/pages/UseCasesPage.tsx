@@ -4,6 +4,7 @@ import { PatternSelector, type PatternFilter, type PatternId } from '../componen
 import { RelatedLinks } from '../components/RelatedLinks'
 import { stackPatterns } from '../data/patterns'
 import { layers } from '../data/layers'
+import { encodeSketchState, sketchFromPattern } from '../utils/sketchState'
 import type { NavigationTarget } from '../navigation'
 
 interface Props {
@@ -86,6 +87,18 @@ export function UseCasesPage({ onNavigate, scrollTo }: Props) {
             {pattern.related && (
               <RelatedLinks refs={pattern.related} onNavigate={onNavigate} />
             )}
+            <div className="pattern-actions">
+              <button
+                type="button"
+                className="nav-chip nav-chip-inline"
+                onClick={() => {
+                  const encoded = encodeSketchState(sketchFromPattern(pattern))
+                  onNavigate({ tab: 'sketch', anchor: encoded })
+                }}
+              >
+                Sketch this pattern →
+              </button>
+            </div>
           </section>
         ))}
       </div>

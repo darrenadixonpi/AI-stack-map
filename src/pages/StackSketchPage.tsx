@@ -11,6 +11,7 @@ import {
   parseCompareAnchor,
 } from '../utils/sketchState'
 import { sketchToMarkdown } from '../utils/sketchMarkdown'
+import { getSketchHints } from '../utils/sketchHints'
 import type { LayerId, SketchPhase, StackSketchState } from '../types'
 import type { NavigationTarget } from '../navigation'
 
@@ -30,6 +31,8 @@ interface EditorProps {
 
 function SketchEditor({ state, setState, onNavigate }: EditorProps) {
   const [ignoreDraft, setIgnoreDraft] = useState('')
+  const [dismissedHints, setDismissedHints] = useState<string[]>([])
+  const hints = getSketchHints(state.layers).filter((h) => !dismissedHints.includes(h.id))
 
   const toggleLayer = (layerId: LayerId) => {
     setState((prev) => {
@@ -107,6 +110,34 @@ function SketchEditor({ state, setState, onNavigate }: EditorProps) {
           </div>
         </div>
       </div>
+
+      {hints.length > 0 && (
+        <div className="sketch-hints" role="list" aria-label="Stack hints">
+          {hints.map((hint) => (
+            <div
+              key={hint.id}
+              role="listitem"
+              className={`sketch-hint sketch-hint-${hint.severity}`}
+            >
+              <div className="sketch-hint-body">
+                <strong className="sketch-hint-title">
+                  {hint.severity === 'warning' ? '⚠ ' : 'ℹ '}
+                  {hint.message}
+                </strong>
+                <p className="sketch-hint-suggestion">{hint.suggestion}</p>
+              </div>
+              <button
+                type="button"
+                className="sketch-hint-dismiss"
+                aria-label={`Dismiss: ${hint.message}`}
+                onClick={() => setDismissedHints((d) => [...d, hint.id])}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="sketch-layout">
         <div className="sketch-diagram-col card">

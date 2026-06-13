@@ -1,5 +1,5 @@
 /** Site-wide metadata — update when you ship content changes */
-export const MAP_VERSION = '1.7.0'
+export const MAP_VERSION = '1.7.2'
 export const MAP_LAST_UPDATED = '2026-06-12'
 export const CATALOG_DEFAULT_REVIEWED = '2026-05'
 
