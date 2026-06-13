@@ -6,8 +6,32 @@ Living plan for content and product work. Map version in the app footer (`src/da
 
 ---
 
-## Shipped (v1.5 – v1.9)
+## Shipped (v1.5 – v1.14)
 
+- [x] **Build vs buy view** (v1.14) — relative effort/time/control/risk on Overview
+- [x] **Governance & compliance lens** (v1.14) — per-layer checklist + risk tiers on the sketch
+- [x] **Command palette** (v1.14) — Cmd+K jumps to any tab or key section
+- [x] **i18n scaffold** (v1.14) — UI strings via a `t()` layer (English)
+- [x] **Offline PWA** (v1.14) — web manifest + service worker
+- [x] **Embeddable layer widget** (v1.14) — `/embed/layers.html`
+- [x] **State of the map note** (v1.13) — heating up / cooling / renamed, on Overview
+- [x] **Catalog freshness panel** (v1.13) — review-date coverage + staleness flags
+- [x] **Migration & scale paths** (v1.13) — outgrow-X-move-to-Y guidance on the Patterns page
+- [x] **Catalog deployment facet + filter** (v1.13) — SaaS / Self-host / Both
+- [x] **Landscape app filters** (v1.13) — by name and by stack layer involved
+- [x] **Cost & latency envelope** (v1.12) — relative $/$$/$$$ tier + latency band on a sketch
+- [x] **Risk register export** (v1.12) — risk / severity / mitigation / owner table from sketch hints
+- [x] **Readiness self-assessment** (v1.12) — scores data/eval/ops/governance to a maturity stage (Stack builder)
+- [x] **Vendor due-diligence checklist** (v1.12) — buy-side question bank on the Landscape page
+- [x] **Expanded sketch review hints** (v1.12) — 4 more layer-combination rules
+- [x] **Eval-driven development loop pattern** (v1.11) — 9 patterns total
+- [x] **Per-pattern business case + reference implementations** (v1.11) — problem / ROI levers / KPIs / risks, plus canonical OSS starters
+- [x] **Plain-language glossary mode** (v1.11) — "explain for stakeholders" toggle across all 31 terms
+- [x] **Sketch ADR + exec-summary exports** (v1.11) — decision record and plain-language stakeholder summary
+- [x] **Sketch team & skills readout** (v1.11) — skill-floor aggregate from picked tools
+- [x] **Map-as-data JSON export** (v1.11) — full catalog/glossary/patterns/comparisons as portable JSON
+- [x] **Community contribution kit** (v1.11) — PR + issue templates and a CI workflow that runs validate + build
+- [x] **Real-time / streaming inference pattern** (v1.10) — low-latency serving; semantic cache, health-based fallback routing, warm pools, TTFT / p95 SLOs (8 patterns total)
 - [x] Tab shell, theme toggle, hash routing, global search
 - [x] Overview jobs, layer diagram, roles, maturity
 - [x] Stack patterns with flow diagrams (with colour-coded legend)
@@ -55,7 +79,7 @@ Living plan for content and product work. Map version in the app footer (`src/da
 
 | Item | Notes |
 |------|--------|
-| More stack patterns | Batch classify, real-time inference, fine-tune pipeline |
+| More stack patterns | ✅ batch classify, real-time inference, fine-tune, eval-driven loop all shipped (9 total). Next candidates: on-device / edge inference, multi-tenant SaaS isolation |
 | Catalog maintenance | Keep `lastReviewed` current; flag newly deprecated/acquired entries |
 | More enterprise app entries | Expand vertical coverage (HR, finance, dev tooling) |
 
@@ -75,9 +99,9 @@ Living plan for content and product work. Map version in the app footer (`src/da
 
 | Item | Notes |
 |------|--------|
-| i18n | UI strings only; content stays EN unless contributed |
-| Offline PWA | Cache static data for conference Wi‑Fi |
-| Community edits | PR template for `src/data/*` + CI validate IDs/links |
+| i18n | ✅ scaffold shipped (v1.14) — `t()` + EN dictionary; add a locale dict to translate UI strings |
+| Offline PWA | ✅ shipped (v1.14) — manifest + service worker cache the shell |
+| Community edits | ✅ PR + issue templates and CI (validate + build) shipped (v1.11). Next: a `content` label + auto-tagging once repo is public |
 | Analytics-free usage | Optional Plausible / none — stay privacy-friendly |
 
 ---

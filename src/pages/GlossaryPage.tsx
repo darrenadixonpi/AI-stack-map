@@ -3,6 +3,7 @@ import { FeedbackLink } from '../components/FeedbackLink'
 import { RelatedLinks } from '../components/RelatedLinks'
 import { glossaryCategories } from '../data/glossaryCategories'
 import { glossaryTerms } from '../data/glossary'
+import { glossaryPlainLanguage } from '../data/glossaryPlainLanguage'
 import type { GlossaryCategoryId } from '../types'
 import type { NavigationTarget } from '../navigation'
 import { targetToHash } from '../navigation'
@@ -20,6 +21,7 @@ function termLetter(term: string): string {
 export function GlossaryPage({ onNavigate, scrollTo }: Props) {
   const [openIds, setOpenIds] = useState<Set<string>>(new Set())
   const [categoryFilter, setCategoryFilter] = useState<GlossaryCategoryId | null>(null)
+  const [plain, setPlain] = useState(false)
 
   useEffect(() => {
     if (scrollTo) {
@@ -89,6 +91,15 @@ export function GlossaryPage({ onNavigate, scrollTo }: Props) {
               : `${glossaryTerms.length} terms`}
           </span>
           <div className="glossary-toolbar-actions">
+            <button
+              type="button"
+              className={`nav-chip${plain ? ' nav-chip-on' : ''}`}
+              onClick={() => setPlain((v) => !v)}
+              aria-pressed={plain}
+              title="Show plain-language explanations for non-technical stakeholders"
+            >
+              {plain ? 'Plain language: on' : 'Plain language: off'}
+            </button>
             <button type="button" className="nav-chip" onClick={expandAll}>
               Expand all
             </button>
@@ -175,6 +186,12 @@ export function GlossaryPage({ onNavigate, scrollTo }: Props) {
                         label="Suggest a glossary edit"
                       />
                       <dl>
+                        {plain && glossaryPlainLanguage[term.id] && (
+                          <>
+                            <dt className="glossary-plain-dt">In plain terms</dt>
+                            <dd className="glossary-plain-dd">{glossaryPlainLanguage[term.id]}</dd>
+                          </>
+                        )}
                         <dt>What it is</dt>
                         <dd>{term.whatItIs}</dd>
                         <dt>What it is not</dt>

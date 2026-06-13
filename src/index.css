@@ -1446,6 +1446,326 @@ table.compare-table th {
   opacity: 0.88;
 }
 
+/* ── Wave 1 additions ───────────────────────────────────────────────── */
+
+/* Plain-language glossary mode */
+.nav-chip-on {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.glossary-plain-dt {
+  color: var(--accent);
+}
+.glossary-plain-dd {
+  font-style: italic;
+}
+
+/* Per-pattern business case + references */
+.pattern-business-case {
+  margin: 0.75rem 0;
+}
+.pattern-business-case > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.business-problem {
+  font-style: italic;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0.75rem;
+}
+.business-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.business-grid h5 {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.business-grid ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+}
+.pattern-references {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Skill-floor badges + sketch staffing readout */
+.skill-badge {
+  display: inline-block;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 1px solid var(--border);
+}
+.skill-low {
+  color: #16a34a;
+  border-color: #16a34a88;
+}
+.skill-medium {
+  color: #d97706;
+  border-color: #d9770688;
+}
+.skill-high {
+  color: #dc2626;
+  border-color: #dc262688;
+}
+.sketch-staffing-overall {
+  font-size: 0.95rem;
+}
+.sketch-staffing-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* Map-as-data export note */
+.overview-data-export {
+  margin-top: 1.25rem;
+}
+
+/* ── Wave 2 additions ───────────────────────────────────────────────── */
+
+/* Cost & latency envelope */
+.sketch-envelope-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+.sketch-envelope-tier {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0.2rem 0;
+  letter-spacing: 0.1em;
+}
+.sketch-envelope-band {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0.2rem 0;
+}
+.sketch-envelope-drivers {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Readiness self-assessment */
+.readiness-questions {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.readiness-q {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.readiness-q-text {
+  flex: 1 1 280px;
+  font-size: 0.92rem;
+}
+.readiness-dim {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  margin-right: 0.4rem;
+}
+.readiness-opts {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+.readiness-result {
+  border-top: 1px solid var(--border);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+/* Vendor due-diligence checklist */
+.dd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+.dd-group h4 {
+  margin: 0 0 0.4rem;
+}
+.dd-group ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.88rem;
+}
+.dd-group li {
+  margin-bottom: 0.35rem;
+}
+
+/* ── Wave 3 additions ───────────────────────────────────────────────── */
+
+.badge-deployment {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+/* Freshness panel */
+.freshness-months {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.freshness-row {
+  display: grid;
+  grid-template-columns: 5rem 1fr 2rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+.freshness-bar-track {
+  background: var(--border);
+  border-radius: 999px;
+  height: 0.6rem;
+  overflow: hidden;
+}
+.freshness-bar {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+}
+.freshness-count {
+  text-align: right;
+  color: var(--text-muted);
+}
+
+/* State of the map */
+.state-of-map-group h4 {
+  margin: 0.5rem 0 0.25rem;
+}
+.state-of-map-group ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+/* Migration & scale paths */
+.migrations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+.migration-row {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.85rem;
+}
+.migration-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+.migration-arrow {
+  color: var(--text-muted);
+}
+.migration-to {
+  color: var(--accent);
+}
+.migration-trigger,
+.migration-note {
+  margin: 0.15rem 0;
+  font-size: 0.9rem;
+}
+.migration-note {
+  color: var(--text-muted);
+}
+
+/* Landscape filters */
+.landscape-filters {
+  margin-bottom: 1.25rem;
+}
+
+/* ── Wave 4 additions ───────────────────────────────────────────────── */
+
+/* Build vs buy */
+.build-buy-scenario {
+  margin: 0.75rem 0;
+}
+.build-buy-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+.build-buy-col h5 {
+  margin: 0 0 0.4rem;
+}
+.build-buy-example {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.build-buy-col dl {
+  margin: 0;
+  font-size: 0.88rem;
+}
+.build-buy-col dt {
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+.build-buy-col dd {
+  margin: 0 0 0.2rem;
+  color: var(--text-muted);
+}
+
+/* Governance lens */
+.sketch-governance > summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.governance-layers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.governance-layer h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.95rem;
+}
+.governance-layer ul,
+.governance-tiers ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+}
+.governance-tiers {
+  margin-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+}
+
 .sketch-layout {
   display: grid;
   gap: 1.25rem;

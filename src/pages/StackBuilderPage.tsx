@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AgentDecisionTree } from '../components/AgentDecisionTree'
+import { ReadinessAssessment } from '../components/ReadinessAssessment'
 import {
   buildStack,
   builderConstraints,
@@ -273,6 +274,10 @@ export function StackBuilderPage({ onNavigate, anchor, scrollTo }: Props) {
       <h2 id="agent-tree">Do I need an agent?</h2>
       <p className="lead">Walk through before picking an agent framework.</p>
       <AgentDecisionTree />
+
+      <h2 id="readiness">Are you ready to ship?</h2>
+      <p className="lead">A quick gut-check on the operational basics before you scale.</p>
+      <ReadinessAssessment />
     </>
   )
 }

@@ -67,5 +67,49 @@ export function getSketchHints(layers: LayerId[]): SketchHint[] {
     }
   }
 
+  // Retrieval stack with a data layer but no eval harness
+  if (has(layers, 'capabilities') && has(layers, 'data') && !has(layers, 'build-ship')) {
+    hints.push({
+      id: 'rag-no-eval',
+      severity: 'info',
+      message: 'Retrieval stack without an eval harness',
+      suggestion:
+        'RAG quality (recall, faithfulness) degrades silently as your corpus changes. Add a Build & ship layer with a small eval set (Ragas, promptfoo) before you scale.',
+    })
+  }
+
+  // Governance controls you cannot verify without observability
+  if (has(layers, 'governance') && !has(layers, 'build-ship') && !has(layers, 'orchestration')) {
+    hints.push({
+      id: 'governance-no-obs',
+      severity: 'info',
+      message: 'Policy and cost caps with no observability',
+      suggestion:
+        'You can only prove guardrails and spend limits work if you log them. Add a Build & ship layer for traces and spend metrics.',
+    })
+  }
+
+  // A product/UX layer with nothing serving the model
+  if (has(layers, 'product') && !has(layers, 'model-access') && !has(layers, 'orchestration')) {
+    hints.push({
+      id: 'product-no-model',
+      severity: 'warning',
+      message: 'Product layer with no model access',
+      suggestion:
+        'A product or UX layer needs a model behind it. Add Model access — an API, a gateway, or a self-hosted inference server.',
+    })
+  }
+
+  // A data layer that nothing retrieves from
+  if (has(layers, 'data') && !has(layers, 'capabilities')) {
+    hints.push({
+      id: 'data-no-capabilities',
+      severity: 'info',
+      message: 'Data layer without a capabilities layer',
+      suggestion:
+        'A vector store or document pipeline usually feeds retrieval. Add a Capabilities layer (embeddings, RAG) — unless this data is only for fine-tuning.',
+    })
+  }
+
   return hints
 }

@@ -1,18 +1,30 @@
+import { useState } from 'react'
 import { applicationProducts } from '../data/applicationTools'
 import { horizontalCategories, verticalCategories } from '../data/applicationCategories'
+import { dueDiligenceChecklist } from '../data/dueDiligence'
+import { layers } from '../data/layers'
 import { catalogAnchorForApps } from '../utils/catalogAnchor'
-import type { ApplicationCategoryId } from '../types'
+import type { ApplicationCategoryId, LayerId } from '../types'
 import type { NavigationTarget } from '../navigation'
 
 interface Props {
   onNavigate: (t: NavigationTarget) => void
 }
 
-function productsInCategory(categoryId: ApplicationCategoryId) {
-  return applicationProducts.filter((p) => p.applicationCategory === categoryId)
-}
-
 export function LandscapePage({ onNavigate }: Props) {
+  const [query, setQuery] = useState('')
+  const [layerFilter, setLayerFilter] = useState<LayerId | 'all'>('all')
+
+  const productsInCategory = (categoryId: ApplicationCategoryId) => {
+    const q = query.toLowerCase().trim()
+    return applicationProducts.filter((p) => {
+      if (p.applicationCategory !== categoryId) return false
+      if (layerFilter !== 'all' && !p.stackLayers.includes(layerFilter)) return false
+      if (!q) return true
+      return p.name.toLowerCase().includes(q) || p.summary.toLowerCase().includes(q)
+    })
+  }
+
   const openCategory = (categoryId: ApplicationCategoryId) => {
     onNavigate({ tab: 'catalog', anchor: catalogAnchorForApps(categoryId) })
   }
@@ -49,6 +61,61 @@ export function LandscapePage({ onNavigate }: Props) {
         </button>
       </p>
 
+      <details className="overview-more landscape-dd" id="vendor-due-diligence">
+        <summary>Vendor due-diligence checklist (for buy decisions)</summary>
+        <div className="overview-more-body">
+          <p className="landscape-block-desc">
+            Neutral questions to put to any AI vendor before procurement — a starting point for the
+            governance conversation, not legal advice.
+          </p>
+          <div className="dd-grid">
+            {dueDiligenceChecklist.map((g) => (
+              <section key={g.id} className="dd-group card">
+                <h4>{g.title}</h4>
+                <ul>
+                  {g.questions.map((q) => (
+                    <li key={q}>{q}</li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </div>
+      </details>
+
+      <div className="card landscape-filters">
+        <input
+          type="search"
+          className="search-input"
+          placeholder="Filter apps by name…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Filter enterprise apps by name"
+        />
+        <div className="segment-group">
+          <div className="segment-label">Involves stack layer</div>
+          <div className="filter-row">
+            <button
+              type="button"
+              className={`segment-btn${layerFilter === 'all' ? ' active' : ''}`}
+              onClick={() => setLayerFilter('all')}
+            >
+              All
+            </button>
+            {layers.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className={`segment-btn${layerFilter === l.id ? ' active' : ''}`}
+                onClick={() => setLayerFilter(l.id)}
+              >
+                {l.shortName}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <section className="landscape-block landscape-horizontal" aria-labelledby="landscape-horizontal-title">
         <h3 id="landscape-horizontal-title" className="landscape-block-title">
           Enterprise: horizontal
@@ -59,6 +126,7 @@ export function LandscapePage({ onNavigate }: Props) {
         <div className="landscape-grid">
           {horizontalCategories.map((cat) => {
             const items = productsInCategory(cat.id)
+            if (items.length === 0) return null
             return (
               <article key={cat.id} className="landscape-category card">
                 <header className="landscape-category-header">
@@ -104,6 +172,7 @@ export function LandscapePage({ onNavigate }: Props) {
         <div className="landscape-grid landscape-grid-vertical">
           {verticalCategories.map((cat) => {
             const items = productsInCategory(cat.id)
+            if (items.length === 0) return null
             return (
               <article key={cat.id} className="landscape-category card">
                 <header className="landscape-category-header">

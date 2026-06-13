@@ -163,5 +163,22 @@ export function buildSearchIndex(): SearchHit[] {
     })
   }
 
+  // Navigation / command-palette entries — jump to any tab or key section
+  const navCommands: SearchHit[] = [
+    { id: 'go-overview', title: 'Go to Overview', snippet: 'Start here, jobs, layers, roles, maturity', tab: 'overview', kind: 'Go to' },
+    { id: 'go-patterns', title: 'Go to Patterns', snippet: 'Stack recipes, MVP vs production, migration paths', tab: 'patterns', kind: 'Go to' },
+    { id: 'go-builder', title: 'Go to Stack builder', snippet: 'Rule-based recommender + readiness self-assessment', tab: 'builder', kind: 'Go to' },
+    { id: 'go-sketch', title: 'Go to Stack sketch', snippet: 'Compose, cost/latency, exports, compare', tab: 'sketch', kind: 'Go to' },
+    { id: 'go-catalog', title: 'Go to Tool catalog', snippet: 'Stack tools + enterprise apps', tab: 'catalog', kind: 'Go to' },
+    { id: 'go-landscape', title: 'Go to Landscape', snippet: 'Enterprise apps + vendor due-diligence', tab: 'landscape', kind: 'Go to' },
+    { id: 'go-compare', title: 'Go to Compare', snippet: 'Confusion matrices', tab: 'compare', kind: 'Go to' },
+    { id: 'go-glossary', title: 'Go to Glossary', snippet: 'Category definitions, plain-language mode', tab: 'glossary', kind: 'Go to' },
+    { id: 'go-agent-tree', title: 'Agent decision tree', snippet: 'Do I need an agent?', tab: 'builder', anchor: 'agent-tree', kind: 'Go to' },
+    { id: 'go-readiness', title: 'Readiness self-assessment', snippet: 'Are you ready to ship?', tab: 'builder', anchor: 'readiness', kind: 'Go to' },
+    { id: 'go-migration', title: 'Migration & scale paths', snippet: 'Outgrow X, move to Y', tab: 'patterns', anchor: 'migration-paths', kind: 'Go to' },
+    { id: 'go-changelog', title: "What's changed", snippet: 'Recent releases', tab: 'overview', anchor: 'changelog', kind: 'Go to' },
+  ]
+  hits.push(...navCommands)
+
   return hits
 }

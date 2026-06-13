@@ -9,6 +9,7 @@ export type LayerId =
 
 export type SkillFloor = 'low' | 'medium' | 'high'
 export type LicenseType = 'oss' | 'commercial' | 'both'
+export type DeploymentModel = 'saas' | 'self-host' | 'both'
 export type EntryStatus = 'active' | 'acquired' | 'deprecated' | 'pivoted'
 
 export type RelatedRef = string
@@ -65,6 +66,8 @@ export interface Tool {
   buildVsBuy: string
   license: LicenseType
   skillFloor: SkillFloor
+  /** Optional explicit deployment model; otherwise derived from licence */
+  deployment?: DeploymentModel
   lastReviewed?: string
   status?: EntryStatus
   related?: RelatedRef[]
@@ -119,6 +122,29 @@ export interface StackPattern {
   mistakes: string[]
   usuallySkip: string[]
   related?: RelatedRef[]
+}
+
+/** Business-facing framing for a pattern (PM / buyer / leadership view) */
+export interface PatternBusinessCase {
+  /** The business problem this pattern addresses, in plain language */
+  problem: string
+  /** Levers that drive return on investment */
+  roiLevers: string[]
+  /** Metrics worth tracking to prove value */
+  kpis: string[]
+  /** Top business / delivery risks to manage */
+  risks: string[]
+}
+
+/** A canonical reference implementation or starter for a pattern */
+export interface PatternReference {
+  label: string
+  url: string
+}
+
+export interface PatternExtras {
+  businessCase?: PatternBusinessCase
+  references?: PatternReference[]
 }
 
 export type CompareGroupId =

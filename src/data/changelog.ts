@@ -10,6 +10,61 @@ export interface ChangelogEntry {
  */
 export const changelog: ChangelogEntry[] = [
   {
+    version: '1.14.0',
+    date: '2026-06-13',
+    changes: [
+      'Overview: Build vs buy — relative effort / time / control / risk for common scenarios',
+      'Sketch: Governance & compliance lens — per-layer checklist and risk-tier framing for your active layers',
+      'Search: command-palette entries — Cmd+K jumps to any tab or key section',
+      'i18n scaffold for UI strings (English) — the app shell now routes through a t() layer',
+      'Offline PWA — web manifest + a service worker that caches the app shell',
+      'Embeddable layer-diagram widget at /embed/layers.html',
+    ],
+  },
+  {
+    version: '1.13.0',
+    date: '2026-06-13',
+    changes: [
+      'Overview: State of the map — what is heating up, cooling, or renamed/acquired',
+      'Overview: Catalog freshness panel — review-date coverage and staleness flags',
+      'Patterns: Migration & scale paths — when to move from the simple option (Ollama→vLLM, pgvector→dedicated, gateway, fine-tune, eval gate)',
+      'Catalog: Deployment facet (SaaS / Self-host / Both) with a filter and a card label',
+      'Landscape: filter enterprise apps by name and by the stack layer they involve',
+    ],
+  },
+  {
+    version: '1.12.0',
+    date: '2026-06-13',
+    changes: [
+      'Sketch: Cost & latency envelope — a relative $/$$/$$$ tier and latency band derived from your layers',
+      'Sketch: Copy risk register export (risk / severity / mitigation / owner table)',
+      'Stack builder: Readiness self-assessment — scores data / eval / ops / governance to a maturity stage',
+      'Landscape: Vendor due-diligence checklist for buy decisions',
+      'Sketch hints: four more rules (RAG without eval, governance without observability, product without model access, data without capabilities)',
+    ],
+  },
+  {
+    version: '1.11.0',
+    date: '2026-06-13',
+    changes: [
+      'New pattern: Eval-driven development loop (9 patterns total)',
+      'Patterns: per-pattern Business case (problem / ROI levers / KPIs / risks) and reference implementations',
+      'Glossary: "Plain language" toggle explains every term for non-technical stakeholders',
+      'Sketch: Copy decision record (ADR) and Copy exec summary exports',
+      'Sketch: Team & skills readout derived from the skill floor of your tool picks',
+      'Overview: Download map data (JSON) — full catalog, glossary, patterns, and comparisons as portable JSON',
+      'Repo: PR + issue templates and a CI workflow that runs validate + build',
+    ],
+  },
+  {
+    version: '1.10.0',
+    date: '2026-06-13',
+    changes: [
+      'New pattern: Real-time / streaming inference — low-latency serving for chat, voice, and autocomplete (8 patterns total)',
+      'Pattern covers semantic caching, health-based fallback routing, warm pools, and time-to-first-token / p95 latency SLOs',
+    ],
+  },
+  {
     version: '1.9.0',
     date: '2026-06-13',
     changes: [

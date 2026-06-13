@@ -8,8 +8,9 @@ import {
 import { CATALOG_DEFAULT_REVIEWED } from '../data/siteMeta'
 import { tools, toolCategories } from '../data/tools'
 import { layers } from '../data/layers'
+import { getToolDeployment, deploymentLabel, deploymentOptions } from '../utils/toolDeployment'
 import type { NavigationTarget } from '../navigation'
-import type { ApplicationCategoryId, LayerId } from '../types'
+import type { ApplicationCategoryId, DeploymentModel, LayerId } from '../types'
 import {
   catalogAnchorForApps,
   parseCatalogAnchor,
@@ -30,6 +31,7 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
   const [query, setQuery] = useState('')
   const [layerFilter, setLayerFilter] = useState<LayerId | 'all'>('all')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
+  const [deploymentFilter, setDeploymentFilter] = useState<DeploymentModel | 'all'>('all')
   const [appCategoryFilter, setAppCategoryFilter] = useState<ApplicationCategoryId | 'all'>(
     parsed.applicationCategory ?? 'all',
   )
@@ -54,6 +56,7 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
     } else if (scrollTo?.startsWith('tool-')) {
       setLayerFilter('all')
       setCategoryFilter('all')
+      setDeploymentFilter('all')
       setQuery('')
     }
   }, [scrollTo])
@@ -87,6 +90,7 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
   const resetStackFilters = () => {
     setLayerFilter('all')
     setCategoryFilter('all')
+    setDeploymentFilter('all')
     setQuery('')
   }
 
@@ -101,6 +105,7 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
     return tools.filter((t) => {
       if (layerFilter !== 'all' && t.layer !== layerFilter) return false
       if (categoryFilter !== 'all' && t.category !== categoryFilter) return false
+      if (deploymentFilter !== 'all' && getToolDeployment(t) !== deploymentFilter) return false
       if (!q) return true
       return (
         t.name.toLowerCase().includes(q) ||
@@ -220,6 +225,29 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
               ))}
             </div>
           </div>
+
+          <div className="segment-group">
+            <div className="segment-label">Deployment</div>
+            <div className="filter-row">
+              <button
+                type="button"
+                className={`segment-btn${deploymentFilter === 'all' ? ' active' : ''}`}
+                onClick={() => setDeploymentFilter('all')}
+              >
+                All
+              </button>
+              {deploymentOptions.map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  className={`segment-btn${deploymentFilter === d ? ' active' : ''}`}
+                  onClick={() => setDeploymentFilter(d)}
+                >
+                  {deploymentLabel(d)}
+                </button>
+              ))}
+            </div>
+          </div>
         </>
       ) : (
         <>
@@ -294,6 +322,7 @@ export function CatalogPage({ onNavigate, scrollTo, onAnchorChange }: Props) {
                 <span className="badge">{layers.find((l) => l.id === tool.layer)?.shortName}</span>
                 <span>{tool.category}</span>
                 <span>{tool.license}</span>
+                <span className="badge badge-deployment">{deploymentLabel(getToolDeployment(tool))}</span>
                 <span>Skill: {tool.skillFloor}</span>
                 <span>Reviewed: {tool.lastReviewed ?? CATALOG_DEFAULT_REVIEWED}</span>
               </div>

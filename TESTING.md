@@ -1,5 +1,90 @@
 # AI Stack Map — Testing Backlog
 
+## v1.14.0 — Build vs buy, governance lens, command palette, i18n, PWA, embed
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-bb1 | Build vs buy | Overview has a "Build vs buy — common scenarios" collapsible with build/buy columns per scenario | |
+| T-gl1 | Governance lens | Sketch shows a "Governance & compliance lens" with concerns for each active layer + risk-tier framing | |
+| T-gl2 | Governance lens | Lens is hidden in compare mode and when no layers are selected | |
+| T-cp1 | Command palette | Cmd+K then typing "sketch" / "compare" / "glossary" shows a "Go to …" result that navigates | |
+| T-cp2 | Command palette | Typing "go" lists the tab/section navigation entries | |
+| T-i18n1 | i18n | App title and subtitle render via t() (unchanged text); `setLocale` + a new dict would swap them | |
+| T-pwa1 | PWA | Production build: a service worker registers; reloading offline still serves the app shell | |
+| T-pwa2 | PWA | `manifest.webmanifest` loads; installing as an app uses the name "AI Stack Map" | |
+| T-em1 | Embed | `/embed/layers.html` renders the 7-layer stack standalone and works in an iframe | |
+| T-em2 | Embed | Embed respects light/dark via prefers-color-scheme and links back to the app | |
+
+---
+
+## v1.13.0 — State of the map, freshness, migrations, deployment facet, landscape filters
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-sm1 | State of map | Overview has a "State of the map — 2026-06" collapsible with Heating up / Cooling / Renamed groups | |
+| T-fr1 | Freshness | Overview "Catalog freshness" panel lists review months with bars and a total count | |
+| T-fr2 | Freshness | Stale line reads "No entries older than 6 months" given current default review date | |
+| T-mg1 | Migrations | Patterns page ends with a "Migration & scale paths" section (5 rows, from → to + layer badge) | |
+| T-mg2 | Migrations | Each row shows a "Move when" trigger and a note | |
+| T-dp1 | Deployment | Catalog stack view has a Deployment filter (All / SaaS / Self-host / Both) | |
+| T-dp2 | Deployment | Filtering to "Self-host" shows OSS tools; "SaaS" shows commercial; tool cards show a deployment badge | |
+| T-dp3 | Deployment | Deep-linking to a tool card clears the deployment filter so the card is visible | |
+| T-ls1 | Landscape | Landscape has a name filter and an "Involves stack layer" filter | |
+| T-ls2 | Landscape | Selecting a layer hides categories with no matching apps; clearing shows all again | |
+
+---
+
+## v1.12.0 — Cost/latency, risk register, readiness, vendor checklist, more hints
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-c1 | Cost/latency | Adding layers updates the "Cost & latency envelope" tier ($→$$→$$$) and driver list | |
+| T-c2 | Cost/latency | Orchestration layer pushes latency band to "Multi-second"; single model call shows streaming band | |
+| T-c3 | Cost/latency | Card is hidden in compare mode and when no layers are selected | |
+| T-rr1 | Risk register | "Copy risk register" copies a markdown table with hint-derived rows + 3 baseline rows | |
+| T-rr2 | Risk register | Button shows "Copied ✓" and is hidden in compare mode | |
+| T-rd1 | Readiness | Stack builder shows a "Readiness self-assessment" with 6 questions (No/Partly/Yes) | |
+| T-rd2 | Readiness | Score maps to a stage (Experiment→Production/enterprise) and names a "shore up first" dimension | |
+| T-rd3 | Readiness | Partial answers show the "answer all 6" hint; nothing persists across reload | |
+| T-dd1 | Vendor checklist | Landscape page has a collapsible "Vendor due-diligence checklist" with 5 grouped sections | |
+| T-h1 | Hints | RAG (capabilities+data) with no Build & ship fires "Retrieval stack without an eval harness" | |
+| T-h2 | Hints | A data layer with no Capabilities fires "Data layer without a capabilities layer" | |
+
+---
+
+## v1.11.0 — Eval pattern, business case, plain-language glossary, exports, JSON
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-e1 | Eval pattern | "Eval loop" appears in the pattern selector; flow shows evalset → build → run → gate with two feedback arrows | |
+| T-b1 | Business case | Each pattern shows a collapsible "Business case (for PMs & buyers)" with problem, ROI levers, KPIs, risks | |
+| T-b2 | References | Each pattern lists "Reference implementations" links that open the correct repo in a new tab | |
+| T-g1 | Glossary plain mode | "Plain language: off" toggle flips to "on" and shows an "In plain terms" row on each term | |
+| T-g2 | Glossary plain mode | Toggling off removes the plain rows; technical definition still present | |
+| T-x1 | ADR export | "Copy decision record" copies a markdown ADR with Context / Decision / Alternatives / Consequences | |
+| T-x2 | Exec export | "Copy exec summary" copies a plain-language summary with build-vs-buy counts and risks | |
+| T-x3 | Exports | Both buttons show "Copied ✓" for ~1.5 s and are hidden in compare mode | |
+| T-k1 | Staffing | Picking concrete tools shows a "Team & skills" card with a highest-skill-floor badge and per-pick list | |
+| T-k2 | Staffing | Type-only / "decide later" slots do not appear in the readout; card hidden when no tool picked | |
+| T-d1 | JSON export | "Download map data (JSON)" on Overview downloads `ai-stack-map-1.11.0.json` with meta + all collections | |
+| T-r1 | Repo | `.github` has PR template, two issue templates, and a `validate.yml` workflow | |
+
+---
+
+## v1.10.0 — Real-time / streaming inference pattern
+
+| # | Area | What to check | Notes |
+|---|------|---------------|-------|
+| T-r1 | New pattern | "Real-time" button appears in the pattern selector on the Patterns tab | |
+| T-r2 | New pattern | Real-time pattern: layers shown = Product · Capabilities · Model access · Build & ship · Governance | |
+| T-r3 | New pattern | Flow diagram renders router → semantic cache → inference → stream, with the "Populate cache on miss" feedback arrow styled production-only | |
+| T-r4 | New pattern | "Sketch this pattern →" pre-fills the sketch with those 5 layers and the usually-skip list | |
+| T-r5 | New pattern | Related links resolve: Inference server + Semantic cache (Glossary), Local vs API (Compare) | |
+| T-r6 | Changelog | Overview "What's changed" shows the v1.10.0 entry naming the new pattern | |
+| T-r7 | Footer | App footer shows Map version 1.10.0 | |
+
+---
+
 ## v1.9.0 — ARIA fix, builder↔sketch sync, buy+build annotation
 
 | # | Area | What to check | Notes |

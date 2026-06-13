@@ -324,4 +324,122 @@ export const stackPatterns: StackPattern[] = [
     usuallySkip: ['Large agent orchestration', 'Vector DB unless hybrid RAG+FT'],
     related: ['compare:rag-finetune', 'glossary:peft', 'glossary:fine-tuning'],
   },
+  {
+    id: 'realtime-inference',
+    title: 'Real-time / streaming inference (low latency)',
+    shortLabel: 'Real-time',
+    summary:
+      'Interactive, user-facing responses — chat, voice, autocomplete — where time-to-first-token and tail latency matter more than raw throughput. Stream early; keep the hot path short.',
+    diagram: {
+      envelope: [{ id: 'client', label: 'Streaming UI (SSE / WebSocket)', layer: 'product' }],
+      pipeline: [
+        { id: 'route', label: 'Router + health-based fallback', layer: 'model-access' },
+        { id: 'cache', label: 'Semantic cache lookup', layer: 'capabilities' },
+        { id: 'serve', label: 'Low-latency inference (stream)', layer: 'model-access' },
+        { id: 'stream', label: 'Stream tokens to user', layer: 'product' },
+      ],
+      supporting: [
+        { id: 'latency', label: 'TTFT + p95/p99 monitoring', layer: 'build-ship' },
+        { id: 'warm', label: 'Warm pool / autoscaling', layer: 'build-ship' },
+        { id: 'limit', label: 'Rate limit / load shedding', layer: 'governance' },
+      ],
+      feedback: [
+        {
+          fromStepId: 'serve',
+          toStepId: 'cache',
+          label: 'Populate cache on miss',
+          layer: 'capabilities',
+          productionOnly: true,
+        },
+      ],
+      excludes: ['Multi-hop RAG in the hot path', 'Agent loop', 'Batch jobs on the same endpoint'],
+    },
+    layers: ['product', 'capabilities', 'model-access', 'build-ship', 'governance'],
+    mvp: [
+      'Streaming-capable endpoint (Groq / vLLM / TGI or a streaming model API)',
+      'Server-sent events or WebSocket transport to the client',
+      'Token-by-token rendering in the UI (show output as it arrives)',
+      'Request timeout + one fallback model',
+    ],
+    production: [
+      'Semantic cache for repeat/near-duplicate prompts (cuts hot-path latency)',
+      'Latency SLOs on time-to-first-token and p95/p99 (not just average)',
+      'Warm pools / autoscaling to avoid cold-start spikes on self-hosted GPUs',
+      'Router with health-based fallback when a provider degrades',
+      'Load shedding / graceful degradation under burst traffic',
+    ],
+    mistakes: [
+      'Optimising average latency instead of p95/p99 and time-to-first-token — the tail is what users feel',
+      'Putting multi-hop RAG or an agent loop on the hot path without budgeting their round-trips',
+      'No streaming — making users wait for the full completion before anything appears',
+      'Cold starts on idle self-hosted GPUs with no warm pool — the first request after a lull is brutal',
+    ],
+    usuallySkip: [
+      'Heavy multi-hop RAG in the hot path (precompute or cache instead)',
+      'Agent loops on latency-critical surfaces',
+      'Fine-tuning before profiling shows model size is the bottleneck',
+    ],
+    related: ['glossary:inference-server', 'glossary:semantic-cache', 'compare:local-api'],
+  },
+  {
+    id: 'eval-driven-loop',
+    title: 'Eval-driven development loop',
+    shortLabel: 'Eval loop',
+    summary:
+      'Lead with evals: write a labeled eval set before you build, gate every prompt or model change on it, trace production, and feed real failures back into the set.',
+    diagram: {
+      envelope: [{ id: 'feature', label: 'LLM feature under test', layer: 'product' }],
+      pipeline: [
+        { id: 'evalset', label: 'Define eval set + metrics', layer: 'build-ship' },
+        { id: 'build', label: 'Build / change prompt or chain', layer: 'capabilities' },
+        { id: 'run', label: 'Run harness (offline)', layer: 'build-ship' },
+        { id: 'gate', label: 'Gate: ship only if no regression', layer: 'build-ship' },
+      ],
+      supporting: [
+        { id: 'trace', label: 'Production tracing', layer: 'build-ship' },
+        { id: 'judge', label: 'LLM-as-judge + human spot-check', layer: 'build-ship' },
+        { id: 'version', label: 'Prompt + model versioning', layer: 'build-ship' },
+      ],
+      feedback: [
+        {
+          fromStepId: 'gate',
+          toStepId: 'build',
+          label: 'Regression → iterate before shipping',
+          layer: 'capabilities',
+        },
+        {
+          fromStepId: 'trace',
+          toStepId: 'evalset',
+          label: 'Add real production failures to the eval set',
+          layer: 'build-ship',
+          productionOnly: true,
+        },
+      ],
+      excludes: ['Shipping prompt changes with no eval gate', 'Vibes-based "looks good to me" review'],
+    },
+    layers: ['product', 'capabilities', 'model-access', 'build-ship'],
+    mvp: [
+      'A labeled eval set that mirrors real tasks (start with 20–50 cases)',
+      'An eval runner / harness (promptfoo, DeepEval, Ragas, or lm-eval-harness)',
+      'A score or pass/fail threshold agreed before you change the prompt',
+      'Versioned prompts so you can diff what actually changed',
+    ],
+    production: [
+      'CI gate that blocks deploys which regress the eval set',
+      'Production tracing wired back to grow the eval set from real failures',
+      'LLM-as-judge for scale, periodically checked against human labels',
+      'A held-out set to detect overfitting to the eval cases',
+    ],
+    mistakes: [
+      'Building first and writing evals later — the set ends up shaped to pass',
+      'Trusting LLM-as-judge without ever checking it against human labels',
+      'Reusing one eval set until the prompt overfits it — keep a held-out set',
+      'Reporting an average that hides a handful of catastrophic failures',
+    ],
+    usuallySkip: [
+      'A vector DB or agent framework unless the feature itself needs one',
+      'Fine-tuning before evals show the base model is the ceiling',
+    ],
+    related: ['glossary:harness', 'glossary:eval-platform', 'compare:harness-observability'],
+  },
 ]

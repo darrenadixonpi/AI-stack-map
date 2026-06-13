@@ -8,6 +8,7 @@ import type { NavigationTarget, TabId } from './navigation'
 import { parseHash, targetToHash } from './navigation'
 import { isCatalogViewAnchor } from './utils/catalogAnchor'
 import { scrollToAnchor, syncHeaderScrollOffset } from './utils/openAnchor'
+import { t } from './i18n'
 
 const OverviewPage = lazy(() => import('./pages/OverviewPage').then((m) => ({ default: m.OverviewPage })))
 const UseCasesPage = lazy(() => import('./pages/UseCasesPage').then((m) => ({ default: m.UseCasesPage })))
@@ -164,10 +165,8 @@ function App() {
         <div className="app-header-inner">
           <div className="header-top">
             <div className="header-titles">
-              <h1 className="app-title">AI Stack Map</h1>
-              <p className="app-subtitle">
-                Navigate models, RAG, agents, harnesses, and observability without drowning in hype.
-              </p>
+              <h1 className="app-title">{t('app.title')}</h1>
+              <p className="app-subtitle">{t('app.subtitle')}</p>
             </div>
             <div className="header-actions">
               <GlobalSearch onNavigate={navigate} />

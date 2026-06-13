@@ -10,9 +10,17 @@ import {
   encodeCompareAnchor,
   parseCompareAnchor,
 } from '../utils/sketchState'
-import { sketchToMarkdown } from '../utils/sketchMarkdown'
+import {
+  sketchToMarkdown,
+  sketchToADR,
+  sketchToExecSummary,
+  sketchToRiskRegister,
+} from '../utils/sketchMarkdown'
 import { getSketchHints } from '../utils/sketchHints'
+import { getStaffingSummary } from '../utils/sketchStaffing'
+import { getCostLatencyEnvelope } from '../utils/sketchCostLatency'
 import { getRelevantComparisons } from '../utils/sketchCompares'
+import { governanceByLayer, riskTiers } from '../data/governanceLens'
 import { comparisons } from '../data/comparisons'
 import type { LayerId, SketchLayerMode, SketchPhase, StackSketchState } from '../types'
 import type { NavigationTarget } from '../navigation'
@@ -410,6 +418,9 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
 
   const [copiedMd, setCopiedMd] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
+  const [copiedAdr, setCopiedAdr] = useState(false)
+  const [copiedExec, setCopiedExec] = useState(false)
+  const [copiedRisk, setCopiedRisk] = useState(false)
 
   useEffect(() => {
     const c = parseCompareAnchor(scrollTo)
@@ -502,6 +513,36 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
       setTimeout(() => setCopiedMd(false), 1500)
     } catch {
       // silently ignore — browser may block clipboard without user gesture
+    }
+  }
+
+  const handleCopyAdr = async () => {
+    try {
+      await navigator.clipboard.writeText(sketchToADR(state))
+      setCopiedAdr(true)
+      setTimeout(() => setCopiedAdr(false), 1500)
+    } catch {
+      // silently ignore
+    }
+  }
+
+  const handleCopyExec = async () => {
+    try {
+      await navigator.clipboard.writeText(sketchToExecSummary(state))
+      setCopiedExec(true)
+      setTimeout(() => setCopiedExec(false), 1500)
+    } catch {
+      // silently ignore
+    }
+  }
+
+  const handleCopyRisk = async () => {
+    try {
+      await navigator.clipboard.writeText(sketchToRiskRegister(state))
+      setCopiedRisk(true)
+      setTimeout(() => setCopiedRisk(false), 1500)
+    } catch {
+      // silently ignore
     }
   }
 
@@ -611,12 +652,131 @@ export function StackSketchPage({ onNavigate, scrollTo, onAnchorChange }: Props)
         <SketchEditor state={state} setState={updateState} onNavigate={onNavigate} />
       )}
 
+      {!compareMode && state.layers.length > 0 && (() => {
+        const env = getCostLatencyEnvelope(state)
+        return (
+          <div className="card sketch-envelope">
+            <h3>Cost &amp; latency envelope</h3>
+            <div className="sketch-envelope-grid">
+              <div>
+                <span className="segment-label">Relative cost</span>
+                <p className="sketch-envelope-tier">{env.costTier}</p>
+                <ul className="sketch-envelope-drivers">
+                  {env.costDrivers.map((d) => (
+                    <li key={d}>{d}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <span className="segment-label">Latency band</span>
+                <p className="sketch-envelope-band">{env.latencyBand}</p>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{env.latencyNote}</p>
+              </div>
+            </div>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+              Rough, relative envelope — not a quote or an SLA. Load-test with your real prompts and
+              volume before committing.
+            </p>
+          </div>
+        )
+      })()}
+
+      {!compareMode && (() => {
+        const staffing = getStaffingSummary(state)
+        if (!staffing) return null
+        return (
+          <div className="card sketch-staffing">
+            <h3>Team &amp; skills</h3>
+            <p className="sketch-staffing-overall">
+              Highest skill floor in this stack:{' '}
+              <span className={`skill-badge skill-${staffing.overall}`}>{staffing.overall}</span>
+            </p>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{staffing.note}</p>
+            <ul className="sketch-staffing-list">
+              {staffing.picks.map((p) => (
+                <li key={`${p.layer}-${p.tool}`}>
+                  <span className={`skill-badge skill-${p.floor}`}>{p.floor}</span> {p.tool}{' '}
+                  <span style={{ color: 'var(--text-muted)' }}>· {p.layer}</span>
+                </li>
+              ))}
+            </ul>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              Based on the specific tools you picked (type-only slots are not counted).
+            </p>
+          </div>
+        )
+      })()}
+
+      {!compareMode && state.layers.length > 0 && (
+        <details className="card sketch-governance">
+          <summary>Governance &amp; compliance lens</summary>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            A checklist to structure the conversation for your active layers — not legal advice. Pair
+            it with the vendor due-diligence checklist on the Landscape page.
+          </p>
+          <div className="governance-layers">
+            {governanceByLayer
+              .filter((g) => state.layers.includes(g.layer))
+              .map((g) => (
+                <div key={g.layer} className="governance-layer">
+                  <h4>{layers.find((l) => l.id === g.layer)?.name ?? g.layer}</h4>
+                  <ul>
+                    {g.concerns.map((c) => (
+                      <li key={c}>{c}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+          </div>
+          <div className="governance-tiers">
+            <h4>Risk-tier framing</h4>
+            <ul>
+              {riskTiers.map((rt) => (
+                <li key={rt.tier}>
+                  <strong>{rt.tier}:</strong> {rt.note}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </details>
+      )}
+
       <div className="card sketch-export">
         <h3>Export</h3>
         <div className="sketch-export-actions">
           {!compareMode && (
             <button type="button" className="segment-btn" onClick={handleCopyMarkdown}>
               {copiedMd ? 'Copied ✓' : 'Copy markdown plan'}
+            </button>
+          )}
+          {!compareMode && (
+            <button
+              type="button"
+              className="segment-btn"
+              onClick={handleCopyAdr}
+              title="Architecture Decision Record — for an engineering design doc or PR"
+            >
+              {copiedAdr ? 'Copied ✓' : 'Copy decision record'}
+            </button>
+          )}
+          {!compareMode && (
+            <button
+              type="button"
+              className="segment-btn"
+              onClick={handleCopyExec}
+              title="Plain-language summary for non-technical stakeholders"
+            >
+              {copiedExec ? 'Copied ✓' : 'Copy exec summary'}
+            </button>
+          )}
+          {!compareMode && (
+            <button
+              type="button"
+              className="segment-btn"
+              onClick={handleCopyRisk}
+              title="Starter risk register (risk / severity / mitigation / owner) as a markdown table"
+            >
+              {copiedRisk ? 'Copied ✓' : 'Copy risk register'}
             </button>
           )}
           <button type="button" className="segment-btn" onClick={handleCopyLink}>
