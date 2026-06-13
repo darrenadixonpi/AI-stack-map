@@ -102,6 +102,7 @@ _All clear — the `content` GitHub label exists, so suggest-edit issues and the
 | Offline PWA | ✅ shipped (v1.14) — manifest + service worker cache the shell |
 | Community edits | ✅ shipped (v1.11) — PR + issue templates, CI (validate + build), and the `content` label for auto-tagging |
 | Analytics-free usage | Optional Plausible / none — stay privacy-friendly |
+| Suggest-an-edit hardening | Optional follow-ups to the v1.15 box: add a captcha (Cloudflare Turnstile / hCaptcha), and a **durable** per-IP rate limit via Vercel KV / Edge Config — the current `api/suggest.ts` limiter is best-effort in-memory (per warm isolate only). Honeypot + length limits are in place today. |
 
 ---
 
